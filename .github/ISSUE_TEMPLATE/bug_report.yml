@@ -1,0 +1,34 @@
+name: Bug report
+description: Something does not work as it should
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Output of `tsumiba --version`
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options: [Windows, macOS, "Linux (X11)", "Linux (Wayland)", Other]
+    validations:
+      required: true
+  - type: input
+    id: desktop
+    attributes:
+      label: OS version and (Linux) desktop environment
+      placeholder: "e.g. Windows 11 23H2, macOS 15.1, KDE Plasma 6 on Wayland"
+  - type: textarea
+    id: log
+    attributes:
+      label: Log
+      description: "The end of the log file (`tsumiba paths` shows where it is; `TSUMIBA_LOG=debug` adds detail)."
+      render: text
