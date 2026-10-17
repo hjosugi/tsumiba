@@ -12,24 +12,26 @@ root="$(cd "$(dirname "$0")/.." && pwd)"
 out="$root/dist"
 app="$out/Tsumiba.app"
 
-rm -rf "$app" "$out/iconset" "$out/dmg"
-mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources" "$out/iconset"
+# iconutil insists that the directory be named *.iconset.
+iconset="$out/tsumiba.iconset"
+rm -rf "$app" "$iconset" "$out/dmg"
+mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources" "$iconset"
 install -m755 "$binary" "$app/Contents/MacOS/tsumiba"
 
 # Icon: an .iconset needs each size at 1x and 2x.
 icons="$root/assets/icons"
-cp "$icons/tsumiba-16.png"   "$out/iconset/icon_16x16.png"
-cp "$icons/tsumiba-32.png"   "$out/iconset/icon_16x16@2x.png"
-cp "$icons/tsumiba-32.png"   "$out/iconset/icon_32x32.png"
-cp "$icons/tsumiba-64.png"   "$out/iconset/icon_32x32@2x.png"
-cp "$icons/tsumiba-128.png"  "$out/iconset/icon_128x128.png"
-cp "$icons/tsumiba-256.png"  "$out/iconset/icon_128x128@2x.png"
-cp "$icons/tsumiba-256.png"  "$out/iconset/icon_256x256.png"
-cp "$icons/tsumiba-512.png"  "$out/iconset/icon_256x256@2x.png"
-cp "$icons/tsumiba-512.png"  "$out/iconset/icon_512x512.png"
-cp "$icons/tsumiba-1024.png" "$out/iconset/icon_512x512@2x.png"
-iconutil -c icns "$out/iconset" -o "$app/Contents/Resources/tsumiba.icns"
-rm -rf "$out/iconset"
+cp "$icons/tsumiba-16.png"   "$iconset/icon_16x16.png"
+cp "$icons/tsumiba-32.png"   "$iconset/icon_16x16@2x.png"
+cp "$icons/tsumiba-32.png"   "$iconset/icon_32x32.png"
+cp "$icons/tsumiba-64.png"   "$iconset/icon_32x32@2x.png"
+cp "$icons/tsumiba-128.png"  "$iconset/icon_128x128.png"
+cp "$icons/tsumiba-256.png"  "$iconset/icon_128x128@2x.png"
+cp "$icons/tsumiba-256.png"  "$iconset/icon_256x256.png"
+cp "$icons/tsumiba-512.png"  "$iconset/icon_256x256@2x.png"
+cp "$icons/tsumiba-512.png"  "$iconset/icon_512x512.png"
+cp "$icons/tsumiba-1024.png" "$iconset/icon_512x512@2x.png"
+iconutil -c icns "$iconset" -o "$app/Contents/Resources/tsumiba.icns"
+rm -rf "$iconset"
 
 # LSUIElement: an agent app, so no Dock icon and no menu bar of its own; it
 # lives in the menu bar's status area and slides in from the top edge.
@@ -64,7 +66,14 @@ ditto -c -k --keepParent "$app" "$out/$base.zip"
 mkdir -p "$out/dmg"
 cp -R "$app" "$out/dmg/"
 ln -s /Applications "$out/dmg/Applications"
-hdiutil create -volname "tsumiba ${version}" -srcfolder "$out/dmg" -ov -format UDZO "$out/$base.dmg" >/dev/null
+# hdiutil occasionally fails with "Resource busy" on CI runners; try again.
+for attempt in 1 2 3 4; do
+  if hdiutil create -volname "tsumiba ${version}" -srcfolder "$out/dmg" -ov -format UDZO "$out/$base.dmg" >/dev/null; then
+    break
+  fi
+  [ "$attempt" = 4 ] && { echo "hdiutil failed four times" >&2; exit 1; }
+  sleep 5
+done
 rm -rf "$out/dmg"
 echo "$out/$base.zip"
 echo "$out/$base.dmg"
