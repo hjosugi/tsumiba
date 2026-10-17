@@ -42,7 +42,7 @@ jobs:
             $0 ~ "^## \\[" v "\\]" { on = 1; next }
             on && /^## \[/ { exit }
             on { print }
-          ' CHANGELOG.md | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' > notes.md
+          ' CHANGELOG.md | grep -v '^\[[0-9][^]]*\]: ' | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' > notes.md
           test -s notes.md || { echo "CHANGELOG.md has no entry for ${version}" >&2; exit 1; }
           cat >> notes.md <<'EOF'
 

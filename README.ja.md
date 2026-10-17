@@ -8,6 +8,13 @@
 すっと降りてくる、メモとファイルの置き場です。**Windows・macOS・Linux** で動きます。
 [English](README.md) | 日本語
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs-site/landing/screenshots/main-dark-ja.png">
+    <img src="docs-site/landing/screenshots/main-light-ja.png" alt="tsumiba の置き場:左にメモ、右にファイル" width="880">
+  </picture>
+</p>
+
 ポインターを画面の上端に寄せる(またはショートカットを押す)と置き場が降りてきます。
 メモを書く、ファイルを放り込む、元の作業に戻る。用が済めば自分で引っ込み、
 隠れている間は何も消費しません。

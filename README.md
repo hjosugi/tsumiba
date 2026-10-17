@@ -8,6 +8,13 @@
 is a memo and file shelf that slides in from the top edge of your screen — on
 **Windows, macOS and Linux**. English | [日本語](README.ja.md)
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs-site/landing/screenshots/main-dark-en.png">
+    <img src="docs-site/landing/screenshots/main-light-en.png" alt="The tsumiba shelf: notes on the left, files on the right" width="880">
+  </picture>
+</p>
+
 Move the pointer to the top of the screen (or press a shortcut) and the shelf
 drops down: jot a note, drop a file on it, get back to what you were doing. It
 goes away on its own when you do, and costs nothing while hidden.
