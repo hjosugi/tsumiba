@@ -1,0 +1,13 @@
+/target/
+/result
+/dist/
+*.log
+.DS_Store
+node_modules/
+# Extension build output
+/extension/dist/
+# mdBook output goes to target/, but guard against a stray local build
+/docs-site/*/book/
+.claude/settings.local.json
+.vscode/
+.idea/

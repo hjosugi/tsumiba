@@ -1,0 +1,52 @@
+[package]
+name = "tsumiba"
+description = "A cross-platform memo and file shelf that slides in from the screen edge"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+authors.workspace = true
+keywords = ["notes", "shelf", "files", "gui", "productivity"]
+categories = ["gui", "command-line-utilities"]
+
+[lib]
+name = "tsumiba"
+path = "src/lib.rs"
+
+[[bin]]
+name = "tsumiba"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = "1.0.104"
+auto-launch = "0.6.0"
+chrono = "0.4.45"
+clap = { version = "4.6.7", features = ["derive"] }
+clipboard-rs = "0.3.5"
+device_query = "4.0.1"
+directories = "6.0.0"
+display-info = "0.5.9"
+eframe = { version = "0.35.0", default-features = false, features = ["default_fonts", "glow", "x11", "wayland"] }
+egui_extras = { version = "0.35.0", features = ["image", "file"] }
+fontdb = "0.24.0"
+getrandom = "0.4.3"
+global-hotkey = "0.9.0"
+image = { version = "0.25.10", default-features = false, features = ["png", "jpeg", "gif", "webp"] }
+log = "0.4.34"
+open = "5.4.4"
+rfd = "0.17.2"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+sys-locale = "0.3.2"
+tiny_http = "0.12.0"
+toml = "1.1.8"
+tray-icon = { version = "0.26.1", default-features = false, features = ["ksni"] }
+tsumiba-core = { version = "0.1.0", path = "../tsumiba-core" }
+ureq = { version = "3.4.2", default-features = false }
+
+[dev-dependencies]
+tempfile = "3.27.0"
+
+
