@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>tsumiba</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="head">
+        <img class="logo" src="icons/tsumiba-48.png" alt="" width="36" height="36" />
+        <div>
+          <h1 data-i18n="optionsTitle">tsumiba extension</h1>
+          <p class="intro" data-i18n="optionsIntro"></p>
+        </div>
+      </header>
+
+      <form id="form" class="card" novalidate>
+        <div class="field">
+          <label for="port" data-i18n="portLabel">Port</label>
+          <input id="port" name="port" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" maxlength="5" aria-describedby="port-help port-error" />
+          <p id="port-help" class="help" data-i18n="portHelp"></p>
+          <p id="port-error" class="error" role="alert" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="token" data-i18n="tokenLabel">Token</label>
+          <div class="token-row">
+            <input id="token" name="token" type="password" autocomplete="off" spellcheck="false" aria-describedby="token-help token-error" />
+            <button id="toggle-token" class="btn" type="button" aria-pressed="false" data-i18n="tokenShow">Show</button>
+          </div>
+          <p id="token-help" class="help" data-i18n="tokenHelp"></p>
+          <p id="token-error" class="error" role="alert" hidden></p>
+        </div>
+
+        <div class="buttons">
+          <button id="save" class="btn primary" type="submit" data-i18n="save">Save</button>
+          <button id="test" class="btn" type="button" data-i18n="testConnection">Test connection</button>
+          <span id="saved" class="saved" role="status" hidden></span>
+        </div>
+        <p id="test-result" class="result" role="status" aria-live="polite" data-state="idle" hidden></p>
+      </form>
+
+      <section class="card" aria-labelledby="pairing-title">
+        <h2 id="pairing-title" data-i18n="pairingTitle">Pairing</h2>
+        <ol class="steps">
+          <li data-i18n="pairingStep1"></li>
+          <li data-i18n="pairingStep2"></li>
+          <li data-i18n="pairingStep3"></li>
+        </ol>
+      </section>
+
+      <section class="card" aria-labelledby="images-title">
+        <h2 id="images-title" data-i18n="imagesTitle">Images from other sites</h2>
+        <p class="help" data-i18n="imagesHelp"></p>
+        <div class="buttons">
+          <span id="images-state" class="pill" data-state="off"></span>
+          <button id="images-grant" class="btn" type="button" data-i18n="imagesGrant">Allow</button>
+          <button id="images-revoke" class="btn" type="button" data-i18n="imagesRevoke" hidden>Remove access</button>
+        </div>
+      </section>
+    </div>
+    <script type="module" src="options.js"></script>
+  </body>
+</html>

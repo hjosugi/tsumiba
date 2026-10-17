@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>tsumiba</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header class="head">
+      <img class="logo" src="icons/tsumiba-32.png" alt="" width="22" height="22" />
+      <span class="name">tsumiba</span>
+    </header>
+
+    <section id="status" class="status" data-state="checking" role="status" aria-live="polite">
+      <span class="dot" aria-hidden="true"></span>
+      <div class="status-text">
+        <strong id="status-title" data-i18n="statusChecking">Checking…</strong>
+        <span id="status-detail"></span>
+      </div>
+    </section>
+
+    <main>
+      <label for="memo" class="label" data-i18n="memoLabel">Quick note</label>
+      <textarea id="memo" rows="4" spellcheck="true" data-i18n-placeholder="memoPlaceholder" placeholder="Write a note…"></textarea>
+      <div class="row">
+        <span id="memo-hint" class="hint"></span>
+        <button id="save-memo" class="btn primary" type="button" data-i18n="memoSave">Save note</button>
+      </div>
+
+      <div class="actions">
+        <button id="save-page" class="btn" type="button" data-i18n="savePage">Save this page</button>
+        <button id="save-selection" class="btn" type="button" data-i18n="saveSelection">Save selection</button>
+      </div>
+      <p id="selection-hint" class="hint" hidden></p>
+    </main>
+
+    <p id="message" class="message" role="alert" hidden></p>
+
+    <footer class="foot">
+      <button id="open-shelf" class="link" type="button" data-i18n="openShelf">Open shelf</button>
+      <button id="open-options" class="link" type="button" data-i18n="openSettings">Settings</button>
+    </footer>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

@@ -43,13 +43,13 @@ jobs:
         run: cargo build --release --locked
       - name: Binary reports its version
         run: ./target/release/tsumiba --version
-      - name: GUI smoke test (summon, dismiss, type, quit) under Xvfb
-        run: scripts/smoke-gui-linux.sh ./target/release/tsumiba
       - uses: actions/upload-artifact@v7
         with:
           name: tsumiba-linux-x86_64
           path: target/release/tsumiba
           if-no-files-found: error
+      - name: GUI smoke test (summon, dismiss, type, quit) under Xvfb
+        run: scripts/smoke-gui-linux.sh ./target/release/tsumiba
 
   windows:
     name: Windows (build, lint, test)
@@ -104,6 +104,45 @@ jobs:
         with:
           name: tsumiba-macos-arm64
           path: target/release/tsumiba
+          if-no-files-found: error
+
+  extension:
+    name: Browser extension (build, test)
+    needs: linux
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@v8
+        with:
+          name: tsumiba-linux-x86_64
+          path: bin
+      - run: chmod +x bin/tsumiba
+      - name: Build both browsers' packages
+        run: node extension/build.mjs
+      - name: Unit and integration tests, against the real tsumiba binary
+        working-directory: extension
+        env:
+          TSUMIBA_BIN: ${{ github.workspace }}/bin/tsumiba
+        run: npm test
+      # Informational: needs a Chromium that still honours --load-extension, which
+      # branded Chrome no longer does, so fetch Chrome for Testing.
+      - name: Real-browser tests (informational)
+        continue-on-error: true
+        working-directory: extension
+        env:
+          TSUMIBA_BIN: ${{ github.workspace }}/bin/tsumiba
+        run: |
+          CHROMIUM_BIN="$(npx --yes @puppeteer/browsers install chrome@stable --path "$RUNNER_TEMP/browsers" | awk '{print $2}')"
+          echo "using $CHROMIUM_BIN"
+          export CHROMIUM_BIN
+          npm test
+      - uses: actions/upload-artifact@v7
+        with:
+          name: extension-packages
+          path: extension/dist/*.zip
           if-no-files-found: error
 
   nix:

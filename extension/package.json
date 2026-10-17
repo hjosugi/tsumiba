@@ -1,0 +1,10 @@
+{
+  "name": "tsumiba-extension",
+  "private": true,
+  "type": "module",
+  "description": "Browser extension that sends pages, selections, links and images to tsumiba",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test \"test/**/*.test.js\""
+  }
+}

@@ -331,7 +331,7 @@ fn list(env: &Env, only_notes: bool, only_files: bool, query: &str, json: bool) 
             out,
             "note\t{}\t{}{}",
             note.id,
-            if note.pinned { "📌 " } else { "" },
+            if note.pinned { "* " } else { "" },
             title
         )?;
     }

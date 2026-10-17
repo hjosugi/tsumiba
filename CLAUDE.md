@@ -11,7 +11,7 @@ cargo fmt --all --check
 cargo clippy --workspace --all-targets --locked -- -D warnings
 cargo test --workspace --locked
 cargo build --release && scripts/smoke-gui-linux.sh target/release/tsumiba
-node --test extension/test/                   # needs a debug build of tsumiba
+(cd extension && npm test)                    # needs a debug build of tsumiba (TSUMIBA_BIN)
 scripts/build-docs-site.sh                    # docs site -> target/docs-site
 ```
 

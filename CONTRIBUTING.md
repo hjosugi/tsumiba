@@ -31,8 +31,9 @@ scripts/smoke-gui-linux.sh target/release/tsumiba   # needs xvfb-run and xdotool
 It starts the real window under a virtual display and exercises summoning (command
 line, top edge, drag, shortcut), typing, dismissing and quitting. CI runs it too.
 
-The browser extension has its own tests: `node --test extension/test/` (it needs a
-debug build of `tsumiba` to talk to). The documentation site builds with
+The browser extension has its own tests: `cd extension && npm test` (they talk to a
+real `tsumiba` binary: a debug build, or the one named by `TSUMIBA_BIN`; set
+`CHROMIUM_BIN` as well to include the real-browser tests). The documentation site builds with
 `scripts/build-docs-site.sh`.
 
 ## How the code is organised
