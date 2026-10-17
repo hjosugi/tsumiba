@@ -1,0 +1,276 @@
+/* tsumiba documentation theme, layered over mdBook's own.
+ *
+ * Same identity as the app (crates/tsumiba/src/app/theme.rs): a warm paper light
+ * theme and a calm dark one, one amber accent. System fonts only: the site makes
+ * no third-party requests. */
+
+:root {
+  --mono-font: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --content-max-width: 940px;
+  --tsu-sans: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+    "Yu Gothic UI", "Meiryo", "Noto Sans JP", "Noto Sans CJK JP", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --tsu-accent: #f5a524;
+}
+
+html,
+body {
+  font-family: var(--tsu-sans);
+}
+
+html[lang="ja"] .content main {
+  line-height: 1.9;
+}
+
+/* ---- light: warm paper ------------------------------------------------- */
+.light,
+.rust,
+html:not(.js) {
+  --bg: #faf8f3;
+  --fg: #23262e;
+
+  --sidebar-bg: #f1eee6;
+  --sidebar-fg: #2f3340;
+  --sidebar-non-existant: #8c8f9a;
+  --sidebar-active: #935500;
+  --sidebar-spacer: #e4dfd2;
+
+  --scrollbar: #9a9588;
+
+  --icons: #5d6272;
+  --icons-hover: #23262e;
+
+  --links: #935500;
+  --inline-code-color: #6f3f00;
+
+  --theme-popup-bg: #faf8f3;
+  --theme-popup-border: #d9d3c4;
+  --theme-hover: #ece7da;
+
+  --quote-bg: #f4efe3;
+  --quote-border: #e2d8be;
+
+  --table-border-color: #e4dfd2;
+  --table-header-bg: #ece6d6;
+  --table-alternate-bg: #f6f2e8;
+
+  --searchbar-border-color: #c9c2b0;
+  --searchbar-bg: #ffffff;
+  --searchbar-fg: #23262e;
+  --searchbar-shadow-color: #d9d3c4;
+  --searchresults-header-fg: #5d6272;
+  --searchresults-border-color: #d9d3c4;
+  --searchresults-li-bg: #f4efe3;
+  --search-mark-bg: #f5c46b;
+
+  --copy-button-filter: invert(38%) sepia(8%) saturate(500%) hue-rotate(190deg);
+  --copy-button-filter-hover: invert(30%) sepia(90%) saturate(1500%) hue-rotate(10deg);
+
+  --overlay-bg: rgba(60, 50, 30, 0.25);
+  --sidebar-header-border-color: #c97d0a;
+
+  --blockquote-note-color: #1f5fbf;
+  --blockquote-tip-color: #1f7a45;
+  --blockquote-important-color: #7a45c4;
+  --blockquote-warning-color: #935500;
+  --blockquote-caution-color: #b32d20;
+}
+
+/* ---- dark: the app's night palette --------------------------------------- */
+.coal,
+.navy,
+.ayu {
+  --bg: #17191f;
+  --fg: #dfe2ea;
+
+  --sidebar-bg: #1e2128;
+  --sidebar-fg: #c4c9d6;
+  --sidebar-non-existant: #5c6270;
+  --sidebar-active: #f5a524;
+  --sidebar-spacer: #2a2e38;
+
+  --scrollbar: #6b7180;
+
+  --icons: #9aa1b2;
+  --icons-hover: #e8eaf0;
+
+  --links: #f5a524;
+  --inline-code-color: #ffcf7a;
+
+  --theme-popup-bg: #1e2128;
+  --theme-popup-border: #353a47;
+  --theme-hover: #262a33;
+
+  --quote-bg: #1e2128;
+  --quote-border: #353a47;
+
+  --table-border-color: #2a2e38;
+  --table-header-bg: #2a2e38;
+  --table-alternate-bg: #1b1e25;
+
+  --searchbar-border-color: #4a5060;
+  --searchbar-bg: #262a33;
+  --searchbar-fg: #e8eaf0;
+  --searchbar-shadow-color: #000;
+  --searchresults-header-fg: #9aa1b2;
+  --searchresults-border-color: #353a47;
+  --searchresults-li-bg: #262a33;
+  --search-mark-bg: #8a5a12;
+
+  --copy-button-filter: invert(65%) sepia(8%) saturate(300%) hue-rotate(190deg);
+  --copy-button-filter-hover: invert(70%) sepia(60%) saturate(900%) hue-rotate(350deg);
+
+  --overlay-bg: rgba(0, 0, 0, 0.5);
+  --sidebar-header-border-color: #f5a524;
+
+  --blockquote-note-color: #7fb0ff;
+  --blockquote-tip-color: #5fd08a;
+  --blockquote-important-color: #c9a2ff;
+  --blockquote-warning-color: #f5a524;
+  --blockquote-caution-color: #ff7a6e;
+}
+
+/* ---- the book's chrome ------------------------------------------------------ */
+.menu-title::before {
+  content: "";
+  display: inline-block;
+  width: 1.15em;
+  height: 1.15em;
+  margin-right: 0.45em;
+  vertical-align: -0.2em;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%232d3748'/%3E%3Crect x='112' y='318' width='296' height='62' rx='20' fill='%237f8da8'/%3E%3Crect x='144' y='236' width='264' height='62' rx='20' fill='%23e9edf5'/%3E%3Crect x='96' y='154' width='240' height='62' rx='20' fill='%23f5a524'/%3E%3C/svg%3E")
+    center / contain no-repeat;
+}
+
+.right-buttons .tsu-nav {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.7rem;
+  height: 100%;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--icons);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.right-buttons .tsu-nav:hover,
+.right-buttons .tsu-nav:focus-visible {
+  color: var(--icons-hover);
+}
+.right-buttons .tsu-lang {
+  border: 1px solid var(--theme-popup-border);
+  border-radius: 6px;
+  height: 1.9rem;
+  margin: 0 0.35rem;
+  align-self: center;
+}
+
+/* ---- the text ------------------------------------------------------------------ */
+.content main h1 {
+  font-size: 2.1rem;
+  letter-spacing: -0.01em;
+  padding-bottom: 0.4em;
+  border-bottom: 3px solid var(--tsu-accent);
+  margin-bottom: 1.1em;
+}
+.content main h2 {
+  margin-top: 2.2em;
+  padding-bottom: 0.25em;
+  border-bottom: 1px solid var(--table-border-color);
+}
+.content main h2 .header,
+.content main h3 .header {
+  color: inherit;
+}
+
+.content main :not(pre) > code {
+  padding: 0.12em 0.4em;
+  border-radius: 5px;
+  background: var(--quote-bg);
+  border: 1px solid var(--quote-border);
+}
+.content main pre {
+  border-radius: 10px;
+  border: 1px solid var(--quote-border);
+}
+
+.content main table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--table-border-color);
+  border-radius: 10px;
+  overflow: hidden;
+  display: block;
+  overflow-x: auto;
+  max-width: 100%;
+}
+.content main table td,
+.content main table th {
+  border: 0;
+  border-bottom: 1px solid var(--table-border-color);
+  padding: 0.55em 0.85em;
+  vertical-align: top;
+}
+.content main table tr:last-child td {
+  border-bottom: 0;
+}
+/* Row labels (the first column) get room, so wide matrices stay readable. */
+.content main table td:first-child,
+.content main table th:first-child {
+  min-width: 10em;
+}
+
+.content main blockquote {
+  border-radius: 0 10px 10px 0;
+}
+
+/* Screenshots of the app: a quiet frame, so a borderless window does not look
+   like a rectangle of colour pasted into the page. */
+.content main figure {
+  margin: 1.6em 0;
+}
+.content main figure img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid var(--table-border-color);
+  box-shadow: 0 10px 30px rgba(20, 20, 30, 0.18);
+}
+.content main figcaption {
+  margin-top: 0.7em;
+  font-size: 0.9em;
+  color: var(--icons);
+}
+
+/* A status chip for the platform tables. */
+.content main .tag {
+  display: inline-block;
+  padding: 0.05em 0.5em;
+  border-radius: 999px;
+  font-size: 0.78em;
+  font-weight: 600;
+  border: 1px solid var(--quote-border);
+  background: var(--quote-bg);
+  white-space: nowrap;
+}
+
+kbd {
+  font-family: var(--mono-font);
+  font-size: 0.85em;
+  padding: 0.1em 0.45em;
+  border-radius: 5px;
+  border: 1px solid var(--theme-popup-border);
+  border-bottom-width: 2px;
+  background: var(--quote-bg);
+  white-space: nowrap;
+}
+
+@media (max-width: 620px) {
+  .content main h1 {
+    font-size: 1.7rem;
+  }
+  .right-buttons .tsu-nav:not(.tsu-lang) {
+    display: none;
+  }
+}

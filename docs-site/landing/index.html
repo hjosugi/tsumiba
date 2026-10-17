@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>tsumiba — notes and files, one gesture away</title>
+  <meta name="description" content="tsumiba is a memo and file shelf that slides in from the top edge of your screen. Windows, macOS and Linux. Open source.">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script>
+    // Pick the language before the first paint so the page never flashes the wrong one:
+    // ?lang=ja|en, then the remembered choice, then the browser's language.
+    (function () {
+      var lang = 'en';
+      try {
+        var q = /[?&]lang=(ja|en)\b/.exec(location.search);
+        var saved = localStorage.getItem('tsumiba-lang');
+        var nav = (navigator.languages && navigator.languages[0]) || navigator.language || '';
+        lang = q ? q[1] : saved || (/^ja/i.test(nav) ? 'ja' : 'en');
+      } catch (e) {}
+      document.documentElement.lang = lang;
+    })();
+  </script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main"><span lang="en">Skip to content</span><span lang="ja">本文へ移動</span></a>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="./"><img src="icon.svg" alt="" width="30" height="30"><span>tsumiba</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="#how"><span lang="en">How it works</span><span lang="ja">使い方</span></a>
+      <a href="#install"><span lang="en">Install</span><span lang="ja">インストール</span></a>
+      <a href="en/" lang="en">Docs</a>
+      <a href="ja/" lang="ja">ドキュメント</a>
+      <a href="https://github.com/hjosugi/tsumiba">GitHub</a>
+      <span class="langs" role="group" aria-label="Language">
+        <button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-set-lang="ja" aria-pressed="false">日本語</button>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero" style="padding-top:64px">
+  <div class="wrap">
+    <span class="eyebrow"><span lang="en">Windows · macOS · Linux</span><span lang="ja">Windows · macOS · Linux</span></span>
+    <h1><span lang="en">Notes and files, one gesture away.</span><span lang="ja"><span class="nb">メモとファイルを、</span><span class="nb">画面の端にひと積み。</span></span></h1>
+    <p class="lead">
+      <span lang="en">tsumiba (積み場, “a place to pile things”) is a memo and file shelf that slides in from the top edge of your screen. Jot a note, drop a file, get back to what you were doing. It hides when you do, and costs nothing while it’s hidden.</span>
+      <span lang="ja">tsumiba(積み場)は、画面の上端からスライドして現れる、メモとファイルの置き場。メモを書き、ファイルを置いて、元の作業へ。用が済めば自分で引っ込み、隠れている間は何も消費しません。</span>
+    </p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/hjosugi/tsumiba/releases/latest"><span lang="en">Download</span><span lang="ja">ダウンロード</span></a>
+      <a class="btn" href="en/" lang="en">Read the docs</a>
+      <a class="btn" href="ja/" lang="ja">ドキュメントを読む</a>
+      <a class="btn" href="https://github.com/hjosugi/tsumiba">GitHub</a>
+    </div>
+    <p class="fine"><span lang="en">Free and open source (MIT) · no account · no cloud · no telemetry</span><span lang="ja">無料のオープンソース(MIT)· アカウント不要 · クラウドなし · テレメトリなし</span></p>
+
+    <div class="stage" aria-label="">
+      <i class="win w1"></i><i class="win w2"></i><i class="win w3"></i>
+      <i class="edge"></i>
+      <div class="shot">
+        <picture lang="en">
+          <source media="(prefers-color-scheme: dark)" srcset="screenshots/main-dark-en.png">
+          <img src="screenshots/main-light-en.png" width="1040" height="380" alt="The tsumiba panel: a list of notes with one pinned, the open note beside it, and a grid of file tiles on the right.">
+        </picture>
+        <picture lang="ja">
+          <source media="(prefers-color-scheme: dark)" srcset="screenshots/main-dark-ja.png">
+          <img src="screenshots/main-light-ja.png" width="1040" height="380" alt="tsumiba のパネル。ピン留めされたメモのある一覧、開いているメモ、右側にファイルのタイルが並んでいる。">
+        </picture>
+      </div>
+      <svg class="pointer" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 2l7.6 19 2.7-7.7L21 10.6z" fill="#fff" stroke="#111" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </div>
+    <p class="caption">
+      <span lang="en">The real app, to scale, dropping in from the top edge. Screenshots are from the Linux build.</span>
+      <span lang="ja">実際のアプリを実寸の比率で、上端から降ろしたところ。スクリーンショットは Linux 版です。</span>
+    </p>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2><span lang="en">Reach, write, gone.</span><span lang="ja">呼ぶ、書く、消える。</span></h2>
+    <p class="sub"><span lang="en">The shelf is there when you ask and out of the way when you don’t.</span><span lang="ja">呼んだときにそこにあり、呼ばないときは邪魔をしません。</span></p>
+    <ol class="steps">
+      <li>
+        <h3><span lang="en">Reach</span><span lang="ja">呼ぶ</span></h3>
+        <p lang="en">Rest the pointer on the top edge, press <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Space</kbd>, click the tray icon, or run <code>tsumiba toggle</code>. Dragging a file to the edge opens it at once.</p>
+        <p lang="ja">ポインターを上端に置く。<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Space</kbd> を押す。トレイアイコンをクリックする。または <code>tsumiba toggle</code>。ファイルを上端までドラッグすれば、すぐに開きます。</p>
+      </li>
+      <li>
+        <h3><span lang="en">Drop or write</span><span lang="ja">置く、書く</span></h3>
+        <p lang="en">An empty note is waiting with the cursor in it: just type. Or drop files and folders on the right-hand side.</p>
+        <p lang="ja">カーソルの入った空のメモが待っています。そのまま書き始められます。右側にはファイルやフォルダーをドロップします。</p>
+      </li>
+      <li>
+        <h3><span lang="en">Gone</span><span lang="ja">消える</span></h3>
+        <p lang="en">Move away, press <kbd>Esc</kbd>, or click elsewhere and it slides back up. While it’s hidden it holds no timers and does no work.</p>
+        <p lang="ja">ポインターを外す、<kbd>Esc</kbd> を押す、ほかをクリックする。すると上へ引っ込みます。隠れている間はタイマーも持たず、何も処理しません。</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <h2><span lang="en">Two things, done properly.</span><span lang="ja"><span class="nb">やることは 2 つ。</span><span class="nb">丁寧に。</span></span></h2>
+    <p class="sub">
+      <span lang="en">tsumiba is the part of Unclutter people reach for most — notes and files — rebuilt for every desktop. No clipboard manager, on purpose.</span>
+      <span lang="ja">tsumiba は、Unclutter のなかでもよく使われる部分、メモとファイルを、あらゆるデスクトップ向けに作り直したもの。クリップボードマネージャーは、あえて入れていません。</span>
+    </p>
+    <div class="cards">
+      <article class="card">
+        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="5" width="24" height="30" rx="4"/><path d="M14 14h12M14 20h12M14 26h7"/></svg>
+        <h3><span lang="en">Notes</span><span lang="ja">メモ</span></h3>
+        <p lang="en">Plain Markdown files, saved as you type, searchable, pinnable. Deleted notes wait in a trash for 30 days.</p>
+        <p lang="ja">普通の Markdown ファイル。入力するそばから保存され、検索もピン留めもできます。削除したメモは 30 日間ゴミ箱に残ります。</p>
+      </article>
+      <article class="card">
+        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 12a3 3 0 0 1 3-3h8l3 4h11a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3z"/><path d="M20 17v10M16 23l4 4 4-4"/></svg>
+        <h3><span lang="en">Files</span><span lang="ja">ファイル</span></h3>
+        <p lang="en">Drop anything. Keep a private copy or just remember where it is. Image thumbnails; open, reveal, copy, save a copy.</p>
+        <p lang="ja">何でもドロップ。専用のコピーを保存するか、場所だけを覚えるか。画像はサムネイル表示。開く・フォルダーで表示・コピー・コピーを保存。</p>
+      </article>
+      <article class="card">
+        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="7" width="32" height="24" rx="4"/><path d="M4 14h32M10 10.5h.01M15 10.5h.01"/><path d="M16 37h8"/></svg>
+        <h3><span lang="en">Browser extension</span><span lang="ja">ブラウザ拡張</span></h3>
+        <p lang="en">Send the page, a selection, a link or an image from Chrome, Edge, Brave or Firefox: right-click, or the popup.</p>
+        <p lang="ja">Chrome・Edge・Brave・Firefox から、ページ・選択範囲・リンク・画像を送れます。右クリック、またはポップアップから。</p>
+      </article>
+      <article class="card">
+        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="6" width="32" height="22" rx="3"/><path d="M14 34h12M20 28v6"/></svg>
+        <h3><span lang="en">Windows, macOS, Linux</span><span lang="ja">Windows・macOS・Linux</span></h3>
+        <p lang="en">One Rust program for all three, with an honest account of what has been verified where (see below).</p>
+        <p lang="ja">ひとつの Rust 製プログラムで 3 つの OS に対応。何をどこで確認したかは、正直に書いてあります(下記)。</p>
+      </article>
+      <article class="card">
+        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="17" width="22" height="16" rx="3"/><path d="M13 17v-4a7 7 0 0 1 14 0v4"/><path d="M20 23v5"/></svg>
+        <h3><span lang="en">Local and private</span><span lang="ja">ローカルで、プライベート</span></h3>
+        <p lang="en">No account, no cloud, no telemetry. It listens only on 127.0.0.1, behind a token, and checks the Host and Origin of every request.</p>
+        <p lang="ja">アカウント、クラウド、テレメトリはありません。待ち受けるのは 127.0.0.1 だけで、トークンで守られ、すべてのリクエストの Host と Origin を検査します。</p>
+      </article>
+      <article class="card">
+        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 12l-8 8 8 8M26 12l8 8-8 8"/></svg>
+        <h3><span lang="en">Open source, plain files</span><span lang="ja">オープンソース、普通のファイル</span></h3>
+        <p lang="en">MIT licensed. Your data is ordinary files you can back up, sync with any tool, and grep. There is a command line, too.</p>
+        <p lang="ja">MIT ライセンス。データは、バックアップも、好きなツールでの同期も、grep もできる普通のファイルです。コマンドラインもあります。</p>
+      </article>
+    </div>
+
+    <div style="margin-top:28px">
+      <div class="copywrap"><button class="copy" type="button"><span lang="en">Copy</span><span lang="ja">コピー</span></button>
+<pre><code><span class="prompt">$ </span>tsumiba note "buy milk"
+<span class="prompt">$ </span>tsumiba add report.pdf photos/
+<span class="prompt">$ </span>tsumiba list --json | jq '.notes[].title'</code></pre></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap split">
+    <div>
+      <h2><span lang="en">Yours to arrange.</span><span lang="ja">自分好みに。</span></h2>
+      <ul lang="en">
+        <li><strong>English and 日本語</strong>, light and dark: follow your system.</li>
+        <li>Record the <strong>shortcut</strong> by pressing it; set the <strong>edge delay</strong>.</li>
+        <li><strong>Copy</strong> a file or <strong>link</strong> to the original.</li>
+        <li>Show only notes, only files, or both; any <strong>size</strong>.</li>
+        <li>Everything is also in a plain <code>config.toml</code>.</li>
+      </ul>
+      <ul lang="ja">
+        <li><strong>日本語と English</strong>、ライト/ダークはシステムに従います。</li>
+        <li><strong>ショートカット</strong>は押して記録。上端の<strong>待ち時間</strong>も調整できます。</li>
+        <li>ファイルは<strong>コピー</strong>を保存するか、元の場所への<strong>リンク</strong>か。</li>
+        <li>メモだけ、ファイルだけ、両方。好きな<strong>サイズ</strong>に。</li>
+        <li>すべて、普通の <code>config.toml</code> でも設定できます。</li>
+      </ul>
+    </div>
+    <figure>
+      <picture lang="en">
+        <source media="(prefers-color-scheme: dark)" srcset="screenshots/settings-dark-en.png">
+        <img src="screenshots/settings-light-en.png" width="1040" height="440" alt="The settings screen in three columns: general, panel, summon, files and browser extension.">
+      </picture>
+      <picture lang="ja">
+        <source media="(prefers-color-scheme: dark)" srcset="screenshots/settings-dark-ja.png">
+        <img src="screenshots/settings-light-ja.png" width="1040" height="440" alt="3 列の設定画面:一般、パネル、呼び出し、ファイル、ブラウザ拡張。">
+      </picture>
+    </figure>
+  </div>
+</section>
+
+<div class="band">
+  <div class="wrap">
+    <section id="extension">
+      <h2><span lang="en">Send what you’re reading.</span><span lang="ja"><span class="nb">読んでいるものを、</span><span class="nb">そのまま送る。</span></span></h2>
+      <p class="sub">
+        <span lang="en">A small extension for Chrome, Edge, Brave and Firefox sends the page, a selection, a link or an image to the shelf. It only ever talks to your own computer.</span>
+        <span lang="ja">Chrome・Edge・Brave・Firefox 用の小さな拡張機能が、ページ・選択範囲・リンク・画像を積み場へ送ります。通信先は、あなた自身のコンピューターだけです。</span>
+      </p>
+      <div class="flow" aria-hidden="true">
+        <div class="node">
+          <svg viewBox="0 0 84 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"><rect x="4" y="6" width="76" height="52" rx="6"/><path d="M4 18h76"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/><path d="M16 30h52M16 38h40M16 46h46" stroke-linecap="round" opacity=".5"/></svg>
+          <span><span lang="en">your browser</span><span lang="ja">ブラウザ</span></span>
+        </div>
+        <div class="link">
+          <svg viewBox="0 0 90 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 9h80M74 3l8 6-8 6"/></svg>
+          <span>127.0.0.1 + token</span>
+        </div>
+        <div class="node">
+          <svg viewBox="0 0 84 64" aria-label=""><rect x="14" y="4" width="56" height="56" rx="14" fill="#2d3748"/><rect x="25" y="39" width="35" height="7" rx="3" fill="#7f8da8"/><rect x="29" y="29" width="31" height="7" rx="3" fill="#e9edf5"/><rect x="23" y="19" width="28" height="7" rx="3" fill="#f5a524"/></svg>
+          <span><span lang="en">your shelf</span><span lang="ja">積み場</span></span>
+        </div>
+      </div>
+      <div class="split" style="align-items:start">
+        <ul class="menu">
+          <li lang="en"><strong>Send selection</strong> <span>a quote, with a link back</span></li>
+          <li lang="en"><strong>Send link</strong> <span>text, address, where from</span></li>
+          <li lang="en"><strong>Send image</strong> <span>the file itself</span></li>
+          <li lang="en"><strong>Send page</strong> <span>title and address</span></li>
+          <li lang="ja"><strong>選択範囲を送る</strong> <span>引用とページへのリンク</span></li>
+          <li lang="ja"><strong>リンクを送る</strong> <span>テキスト、アドレス、元のページ</span></li>
+          <li lang="ja"><strong>画像を送る</strong> <span>画像ファイルそのもの</span></li>
+          <li lang="ja"><strong>ページを送る</strong> <span>タイトルとアドレス</span></li>
+        </ul>
+        <div>
+          <p lang="en" style="margin-top:0">Pair it once with the token from <code>tsumiba token</code>. A quick-note popup and <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> are included. Not in the stores yet: you load it from the release zip.</p>
+          <p lang="ja" style="margin-top:0"><code>tsumiba token</code> のトークンで、最初に 1 回だけペアリングします。クイックメモのポップアップと <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd> も付いています。ストアにはまだ公開しておらず、リリースの zip から読み込みます。</p>
+          <p class="fine" lang="en">Honest status: exercised in headless Chromium and linted for Firefox; not yet run in Firefox, Edge or Brave.</p>
+          <p class="fine" lang="ja">正直な現状:ヘッドレス Chromium で動作確認し、Firefox 版は lint を通しています。Firefox・Edge・Brave では、まだ実行していません。</p>
+          <p><a href="en/browser-extension.html" lang="en">Extension guide →</a><a href="ja/browser-extension.html" lang="ja">拡張機能のガイド →</a></p>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<section id="install">
+  <div class="wrap">
+    <h2><span lang="en">Install</span><span lang="ja">インストール</span></h2>
+    <p class="sub">
+      <span lang="en">Each installer script downloads the right archive and checks it against the release’s <code>SHA256SUMS.txt</code> first. Or <a href="https://github.com/hjosugi/tsumiba/releases/latest">download it by hand</a>.</span>
+      <span lang="ja">インストーラースクリプトは、お使いの環境に合うアーカイブをダウンロードし、先にリリースの <code>SHA256SUMS.txt</code> と照合します。<a href="https://github.com/hjosugi/tsumiba/releases/latest">手動でダウンロード</a>もできます。</span>
+    </p>
+    <div class="tabs">
+      <input type="radio" name="os" id="t-win" checked><label for="t-win">Windows</label>
+      <input type="radio" name="os" id="t-mac"><label for="t-mac">macOS</label>
+      <input type="radio" name="os" id="t-lin"><label for="t-lin">Linux</label>
+      <input type="radio" name="os" id="t-nix"><label for="t-nix">Nix</label>
+      <input type="radio" name="os" id="t-src"><label for="t-src">Source</label>
+
+      <div class="pane p-win">
+        <div class="copywrap"><button class="copy" type="button"><span lang="en">Copy</span><span lang="ja">コピー</span></button>
+<pre><code>irm https://raw.githubusercontent.com/hjosugi/tsumiba/main/scripts/install.ps1 | iex</code></pre></div>
+        <p lang="en">Installs under <code>%LOCALAPPDATA%\Programs\tsumiba</code> with a Start menu shortcut; no administrator rights. Or unzip <code>tsumiba-&lt;version&gt;-windows-x86_64.zip</code> and run <code>tsumiba.exe</code>. Releases aren’t code-signed yet, so SmartScreen asks once: <em>More info → Run anyway</em>.</p>
+        <p lang="ja"><code>%LOCALAPPDATA%\Programs\tsumiba</code> にインストールし、スタートメニューにショートカットを作ります。管理者権限は不要です。または <code>tsumiba-&lt;version&gt;-windows-x86_64.zip</code> を展開して <code>tsumiba.exe</code> を実行します。まだコード署名されていないため、SmartScreen が一度確認します:<em>詳細情報 → 実行</em>。</p>
+      </div>
+      <div class="pane p-mac">
+        <div class="copywrap"><button class="copy" type="button"><span lang="en">Copy</span><span lang="ja">コピー</span></button>
+<pre><code>curl -fsSL https://raw.githubusercontent.com/hjosugi/tsumiba/main/scripts/install.sh | sh</code></pre></div>
+        <p lang="en">Installs <code>Tsumiba.app</code> (one universal build for Apple silicon and Intel). It is ad-hoc signed, not notarised: right-click → Open the first time, or <code>xattr -dr com.apple.quarantine /Applications/Tsumiba.app</code>.</p>
+        <p lang="ja"><code>Tsumiba.app</code> をインストールします(Apple シリコンと Intel の両方に対応するユニバーサルビルド)。ad-hoc 署名のみで公証されていないため、初回は右クリック →「開く」、または <code>xattr -dr com.apple.quarantine /Applications/Tsumiba.app</code> を実行します。</p>
+      </div>
+      <div class="pane p-lin">
+        <div class="copywrap"><button class="copy" type="button"><span lang="en">Copy</span><span lang="ja">コピー</span></button>
+<pre><code>curl -fsSL https://raw.githubusercontent.com/hjosugi/tsumiba/main/scripts/install.sh | sh</code></pre></div>
+        <p lang="en">Installs into <code>~/.local</code>, no root. Needs OpenGL, <code>libxkbcommon-x11</code> (X11) or <code>libxkbcommon</code> and <code>libwayland-client</code> (Wayland); see the <a href="en/installation.html#linux-requirements">requirements</a>. On Wayland, bind <code>tsumiba toggle</code> to a key.</p>
+        <p lang="ja"><code>~/.local</code> へ、root なしでインストールします。OpenGL と、<code>libxkbcommon-x11</code>(X11)または <code>libxkbcommon</code> と <code>libwayland-client</code>(Wayland)が必要です。<a href="ja/installation.html#linux-requirements">動作要件</a>を参照してください。Wayland では <code>tsumiba toggle</code> をキーに割り当てます。</p>
+      </div>
+      <div class="pane p-nix">
+        <div class="copywrap"><button class="copy" type="button"><span lang="en">Copy</span><span lang="ja">コピー</span></button>
+<pre><code>nix run github:hjosugi/tsumiba</code></pre></div>
+        <p lang="en">The flake also provides a development shell: <code>nix develop</code>.</p>
+        <p lang="ja">この flake には開発用シェルもあります:<code>nix develop</code>。</p>
+      </div>
+      <div class="pane p-src">
+        <div class="copywrap"><button class="copy" type="button"><span lang="en">Copy</span><span lang="ja">コピー</span></button>
+<pre><code>git clone https://github.com/hjosugi/tsumiba
+cd tsumiba
+cargo build --release</code></pre></div>
+        <p lang="en">Rust 1.92 or newer. On Linux you also need <code>pkg-config</code> and the development files for libxcb, libxkbcommon, libx11 and wayland.</p>
+        <p lang="ja">Rust 1.92 以降が必要です。Linux では <code>pkg-config</code> と、libxcb・libxkbcommon・libx11・wayland の開発用ファイルも必要です。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="status">
+  <div class="wrap">
+    <h2><span lang="en">What’s verified, plainly</span><span lang="ja"><span class="nb">確認できていることを、</span><span class="nb">率直に</span></span></h2>
+    <p class="sub">
+      <span lang="en">This is version 0.1.0. Here is exactly how far the checking goes.</span>
+      <span lang="ja">これはバージョン 0.1.0 です。確認がどこまで進んでいるかを、そのまま書きます。</span>
+    </p>
+    <div class="status">
+      <article class="card">
+        <h3><i class="dot ok"></i>Linux (X11)</h3>
+        <p lang="en">The window, the top-edge trigger, the shortcut, dragging to the edge, notes, search and Japanese text were exercised end to end under a virtual display.</p>
+        <p lang="ja">ウィンドウ、上端トリガー、ショートカット、上端へのドラッグ、メモ、検索、日本語の表示を、仮想ディスプレイ上で端から端まで動作確認しました。</p>
+      </article>
+      <article class="card">
+        <h3><i class="dot mid"></i>Windows &amp; macOS</h3>
+        <p lang="en">Built, linted and tested by CI, including the storage, the HTTP API and the command line. The window, tray and shortcut have <strong>not yet been verified on real machines</strong>.</p>
+        <p lang="ja">CI で、保存層・HTTP API・コマンドラインを含めてビルド・lint・テストしています。ウィンドウ・トレイ・ショートカットは<strong>実機ではまだ確認していません</strong>。</p>
+      </article>
+      <article class="card">
+        <h3><i class="dot no"></i>Wayland</h3>
+        <p lang="en">An app cannot watch the pointer or grab a key there, so the shelf is an ordinary window: bind <code>tsumiba toggle</code> to a key. Dragging a file <em>out</em> isn’t supported yet.</p>
+        <p lang="ja">Wayland ではアプリがポインターを監視することもキーを捕まえることもできないため、積み場は通常のウィンドウになります。<code>tsumiba toggle</code> をキーに割り当ててください。ファイルを<em>外へ</em>ドラッグする機能は、まだありません。</p>
+      </article>
+    </div>
+    <p style="margin-top:18px"><a href="en/platforms.html" lang="en">Full platform matrix →</a><a href="ja/platforms.html" lang="ja">対応プラットフォームの一覧 →</a></p>
+  </div>
+</section>
+
+<section id="compare">
+  <div class="wrap">
+    <h2><span lang="en">Where it sits</span><span lang="ja">ほかとの位置づけ</span></h2>
+    <p class="sub">
+      <span lang="en">tsumiba borrows the idea from <a href="https://unclutterapp.com/">Unclutter</a> and the habits of its sibling <a href="https://github.com/hjosugi/yeet">yeet</a>. If dragging files back out is what you need most, yeet and <a href="https://eternalstorms.at/yoink/mac/">Yoink</a> are built around it; tsumiba cannot do that yet.</span>
+      <span lang="ja">tsumiba は、<a href="https://unclutterapp.com/">Unclutter</a> から発想を、兄弟プロジェクトの <a href="https://github.com/hjosugi/yeet">yeet</a> から作法を借りています。ファイルをドラッグで取り出すことが一番の目的なら、それを中心に作られた yeet や <a href="https://eternalstorms.at/yoink/mac/">Yoink</a> のほうが向いています。tsumiba にはまだできません。</span>
+    </p>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th></th><th>tsumiba</th><th>Unclutter</th><th>yeet</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row"><span lang="en">Platforms</span><span lang="ja">対応 OS</span></th><td class="us">Windows · macOS · Linux</td><td>macOS</td><td>Windows · Linux (Wayland)</td></tr>
+          <tr><th scope="row"><span lang="en">Notes</span><span lang="ja">メモ</span></th><td class="us yes">✓</td><td class="yes">✓</td><td class="no2">—</td></tr>
+          <tr><th scope="row"><span lang="en">File shelf</span><span lang="ja">ファイルの置き場</span></th><td class="us yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+          <tr><th scope="row"><span lang="en">Clipboard history</span><span lang="ja">クリップボード履歴</span></th><td class="us no2"><span lang="en">— (on purpose)</span><span lang="ja">—(あえて無し)</span></td><td class="yes">✓</td><td class="no2">—</td></tr>
+          <tr><th scope="row"><span lang="en">Browser extension</span><span lang="ja">ブラウザ拡張</span></th><td class="us yes">✓</td><td class="no2"><span lang="en">not advertised</span><span lang="ja">公式サイトに記載なし</span></td><td class="no2">—</td></tr>
+          <tr><th scope="row"><span lang="en">Source and price</span><span lang="ja">ソースと価格</span></th><td class="us"><span lang="en">Open source (MIT), free</span><span lang="ja">オープンソース(MIT)、無料</span></td><td><span lang="en">Closed source, one-time licence (10-day trial)</span><span lang="ja">クローズドソース、買い切りライセンス(10 日間の試用)</span></td><td><span lang="en">Open source (MIT), free</span><span lang="ja">オープンソース(MIT)、無料</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a class="brand" href="./"><img src="icon.svg" alt="" width="30" height="30"><span>tsumiba</span></a>
+      <p lang="en">Notes and files, one gesture away. MIT licensed.</p>
+      <p lang="ja">メモとファイルを、画面の端にひと積み。MIT ライセンス。</p>
+    </div>
+    <div>
+      <h4><span lang="en">Documentation</span><span lang="ja">ドキュメント</span></h4>
+      <ul>
+        <li><a href="en/">English</a></li>
+        <li><a href="ja/">日本語</a></li>
+        <li><a href="en/api.html" lang="en">HTTP API</a><a href="ja/api.html" lang="ja">HTTP API</a></li>
+        <li><a href="en/changelog.html" lang="en">Changelog</a><a href="ja/changelog.html" lang="ja">変更履歴</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4><span lang="en">Project</span><span lang="ja">プロジェクト</span></h4>
+      <ul>
+        <li><a href="https://github.com/hjosugi/tsumiba">GitHub</a></li>
+        <li><a href="https://github.com/hjosugi/tsumiba/releases/latest"><span lang="en">Releases</span><span lang="ja">リリース</span></a></li>
+        <li><a href="https://github.com/hjosugi/tsumiba/issues"><span lang="en">Issues</span><span lang="ja">イシュー</span></a></li>
+        <li><a href="https://github.com/hjosugi/tsumiba/blob/main/LICENSE"><span lang="en">License (MIT)</span><span lang="ja">ライセンス(MIT)</span></a></li>
+        <li><a href="https://github.com/hjosugi/tsumiba/blob/main/SECURITY.md"><span lang="en">Security</span><span lang="ja">セキュリティ</span></a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

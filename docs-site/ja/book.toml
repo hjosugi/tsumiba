@@ -1,0 +1,23 @@
+[book]
+title = "tsumiba"
+description = "tsumiba のドキュメント。画面の端からスライドして現れる、メモとファイルの積み場。"
+authors = ["hjosugi"]
+language = "ja"
+src = "src"
+
+[build]
+build-dir = "../../target/docs-site/ja"
+create-missing = false
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "coal"
+git-repository-url = "https://github.com/hjosugi/tsumiba"
+edit-url-template = "https://github.com/hjosugi/tsumiba/edit/main/docs-site/ja/{path}"
+site-url = "/tsumiba/ja/"
+additional-css = ["theme/tsumiba.css"]
+additional-js = ["theme/tsumiba-docs.js"]
+
+[output.html.search]
+enable = true
+limit-results = 20

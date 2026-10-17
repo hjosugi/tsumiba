@@ -1,0 +1,23 @@
+[book]
+title = "tsumiba"
+description = "Documentation for tsumiba, a memo and file shelf that slides in from the screen edge."
+authors = ["hjosugi"]
+language = "en"
+src = "src"
+
+[build]
+build-dir = "../../target/docs-site/en"
+create-missing = false
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "coal"
+git-repository-url = "https://github.com/hjosugi/tsumiba"
+edit-url-template = "https://github.com/hjosugi/tsumiba/edit/main/docs-site/en/{path}"
+site-url = "/tsumiba/en/"
+additional-css = ["theme/tsumiba.css"]
+additional-js = ["theme/tsumiba-docs.js"]
+
+[output.html.search]
+enable = true
+limit-results = 20

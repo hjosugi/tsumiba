@@ -1,0 +1,6 @@
+# Copied in by scripts/build-docs-site.sh from docs-site/theme and
+# docs-site/landing/screenshots; edit the originals.
+/en/theme/
+/ja/theme/
+/en/src/images/
+/ja/src/images/

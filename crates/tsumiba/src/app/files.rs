@@ -125,7 +125,7 @@ pub fn cover_uv(source: egui::Vec2, target: egui::Vec2) -> egui::Rect {
 pub fn thumbnail_uri(file: &StoredFile) -> Option<String> {
     let raster = matches!(
         file.extension().as_str(),
-        "png" | "jpg" | "jpeg" | "gif" | "webp" | "bmp"
+        "png" | "jpg" | "jpeg" | "gif" | "webp"
     );
     if !raster || file.is_dir || file.missing || file.size > MAX_THUMBNAIL_BYTES {
         return None;

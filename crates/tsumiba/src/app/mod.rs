@@ -294,11 +294,16 @@ impl TsumibaApp {
 
         let mut hotkey = HotkeyService::new(control.clone());
         let mut active_hotkey = String::new();
-        match hotkey.apply(&boot.config.trigger.hotkey) {
-            Ok(()) => active_hotkey = boot.config.trigger.hotkey.clone(),
-            Err(e) => {
-                log::warn!("{e}");
-                toasts.push(e);
+        // Where the session cannot grab keys at all (Wayland) there is nothing to
+        // register and nothing to report on every start; the settings screen
+        // explains it and `tsumiba toggle` is the way in.
+        if hotkey.available() {
+            match hotkey.apply(&boot.config.trigger.hotkey) {
+                Ok(()) => active_hotkey = boot.config.trigger.hotkey.clone(),
+                Err(e) => {
+                    log::warn!("{e}");
+                    toasts.push(e);
+                }
             }
         }
 

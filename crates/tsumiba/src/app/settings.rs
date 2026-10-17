@@ -44,7 +44,7 @@ pub fn show(
 
     Frame::NONE
         .fill(pal.surface)
-        .inner_margin(Margin::symmetric(18, 12))
+        .inner_margin(Margin::symmetric(18, 8))
         .show(ui, |ui| {
             ui.set_min_size(ui.available_size());
             ui.horizontal(|ui| {
@@ -54,7 +54,7 @@ pub fn show(
                 ui.add_space(8.0);
                 ui.label(RichText::new(s.settings).heading());
             });
-            ui.add_space(6.0);
+            ui.add_space(2.0);
 
             egui::ScrollArea::vertical()
                 .auto_shrink(false)
@@ -74,7 +74,7 @@ pub fn show(
 }
 
 fn group<R>(ui: &mut Ui, pal: &Palette, title: &str, add: impl FnOnce(&mut Ui) -> R) -> R {
-    ui.add_space(10.0);
+    ui.add_space(6.0);
     section_title(ui, pal, &title.to_uppercase());
     ui.add_space(2.0);
     add(ui)
