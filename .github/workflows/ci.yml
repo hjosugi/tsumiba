@@ -138,7 +138,7 @@ jobs:
           CHROMIUM_BIN="$(npx --yes @puppeteer/browsers install chrome@stable --path "$RUNNER_TEMP/browsers" | awk '{print $2}')"
           echo "using $CHROMIUM_BIN"
           export CHROMIUM_BIN
-          npm test
+          npm run test:browser
       - uses: actions/upload-artifact@v7
         with:
           name: extension-packages

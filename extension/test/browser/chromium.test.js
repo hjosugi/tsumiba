@@ -1,10 +1,10 @@
 // The extension in a real Chromium, talking to the real tsumiba.
 //
-// Needs a Chromium on PATH (or $CHROMIUM_BIN) and a tsumiba binary; otherwise
+// Run with `npm run test:browser`. Needs a Chromium on PATH (or $CHROMIUM_BIN) and a tsumiba binary; otherwise
 // the whole file is skipped. Branded Google Chrome is not used on purpose: it
 // has not accepted --load-extension since version 137. Run it with, say,
 //
-//   nix shell nixpkgs#chromium -c node --test test/browser/
+//   nix shell nixpkgs#chromium -c npm run test:browser
 //
 // The browser runs headless, driven over the DevTools Protocol with no
 // dependencies (test/helpers/cdp.js).
@@ -26,7 +26,9 @@ import { SKIP_REASON, startServer, tsumibaBinary } from '../helpers/server.js';
 function chromiumBinary() {
   if (process.env.CHROMIUM_BIN) return process.env.CHROMIUM_BIN;
   for (const dir of (process.env.PATH ?? '').split(delimiter)) {
-    for (const name of ['chromium', 'chromium-browser']) {
+    // Not `chromium-browser`: on Ubuntu that is a snap launcher that does not
+    // load unpacked extensions.
+    for (const name of ['chromium']) {
       const candidate = join(dir, name);
       try {
         accessSync(candidate, constants.X_OK);

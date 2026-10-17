@@ -33,7 +33,7 @@ line, top edge, drag, shortcut), typing, dismissing and quitting. CI runs it too
 
 The browser extension has its own tests: `cd extension && npm test` (they talk to a
 real `tsumiba` binary: a debug build, or the one named by `TSUMIBA_BIN`; set
-`CHROMIUM_BIN` as well to include the real-browser tests). The documentation site builds with
+`CHROMIUM_BIN` and run `npm run test:browser` for the real-browser tests). The documentation site builds with
 `scripts/build-docs-site.sh`.
 
 ## How the code is organised

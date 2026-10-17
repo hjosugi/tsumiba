@@ -126,10 +126,12 @@ step beyond copying files and writing the right manifest for each browser.
 
 ```sh
 node build.mjs            # dist/chrome, dist/firefox and both .zip files
-node --test "test/**/*.test.js"      # or: npm test
+npm test                  # unit + integration: deterministic, needs a tsumiba binary
+npm run test:browser      # real Chromium (set CHROMIUM_BIN, or have `chromium` on PATH)
+npm run test:all          # everything
 ```
 
-(On Node 24 `node --test test/` with a bare directory does not work; pass a glob.)
+(On Node 24 `node --test test/` with a bare directory does not work; the scripts pass globs.)
 
 The tests, from fastest to most real:
 
@@ -143,7 +145,7 @@ The tests, from fastest to most real:
    the DevTools Protocol: service worker, menus, shortcut, popup, options page,
    and a check that an ordinary web page cannot use the API. Needs `chromium` on
    `PATH` (or `CHROMIUM_BIN`), e.g.
-   `nix shell nixpkgs#chromium -c node --test test/browser/`. A Firefox build is only
+   `nix shell nixpkgs#chromium -c npm run test:browser`. A Firefox build is only
    linted (`web-ext lint`), not run.
 
 The wire contract is documented with the app: *HTTP API*.

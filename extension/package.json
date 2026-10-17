@@ -5,6 +5,8 @@
   "description": "Browser extension that sends pages, selections, links and images to tsumiba",
   "scripts": {
     "build": "node build.mjs",
-    "test": "node --test \"test/**/*.test.js\""
+    "test": "node --test \"test/unit/**/*.test.js\" \"test/integration/**/*.test.js\"",
+    "test:browser": "node --test \"test/browser/**/*.test.js\"",
+    "test:all": "node --test \"test/**/*.test.js\""
   }
 }
