@@ -1,0 +1,24 @@
+[Desktop Entry]
+Type=Application
+Name=tsumiba
+GenericName=Memo and file shelf
+GenericName[ja]=メモとファイルの積み場
+Comment=Notes and files, one gesture away
+Comment[ja]=メモとファイルを、画面の端にひと積み
+Exec=tsumiba
+Icon=tsumiba
+Terminal=false
+Categories=Utility;
+Keywords=notes;memo;files;shelf;drop;clipboard;メモ;ファイル;
+StartupWMClass=tsumiba
+Actions=Toggle;Settings;
+
+[Desktop Action Toggle]
+Name=Show or hide the shelf
+Name[ja]=積み場を表示 / 非表示
+Exec=tsumiba toggle
+
+[Desktop Action Settings]
+Name=Settings
+Name[ja]=設定
+Exec=tsumiba run

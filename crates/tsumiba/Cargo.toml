@@ -60,3 +60,6 @@ windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_Secur
 core-graphics = "0.25.0"
 
 
+
+[target.'cfg(windows)'.build-dependencies]
+winresource = "0.1"

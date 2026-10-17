@@ -120,6 +120,11 @@ pub fn run(boot: Boot) -> eframe::Result {
         .with_always_on_top()
         .with_taskbar(false)
         .with_visible(false)
+        // eframe shows the window after painting its first frame whatever was
+        // asked for (to avoid a white flash). When starting in the tray, the
+        // first `logic` pass hides it again; starting far off-screen means
+        // that moment is never seen.
+        .with_position(egui::pos2(-20_000.0, -20_000.0))
         .with_window_type(egui::X11WindowType::Utility);
     if let Some(icon) = icon {
         viewport = viewport.with_icon(icon);
@@ -211,6 +216,9 @@ pub struct TsumibaApp {
     screen: Screen,
     keep_open: bool,
     quitting: bool,
+    /// Whether the first frame has been through `logic` yet.
+    started: bool,
+    show_on_start: bool,
     search: String,
     notes: NotesState,
     files: files::FilesState,
@@ -332,6 +340,8 @@ impl TsumibaApp {
             screen: Screen::Main,
             keep_open: false,
             quitting: false,
+            started: false,
+            show_on_start: boot.show,
             search: String::new(),
             notes: NotesState::default(),
             files: files::FilesState::default(),
@@ -984,6 +994,12 @@ fn import_in_background(
 
 impl eframe::App for TsumibaApp {
     fn logic(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        if !self.started {
+            self.started = true;
+            if !self.show_on_start {
+                ctx.send_viewport_cmd(ViewportCommand::Visible(false));
+            }
+        }
         self.drain_commands(ctx);
         self.tick_close_request(ctx);
         self.tick_animation(ctx);

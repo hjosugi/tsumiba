@@ -59,8 +59,12 @@ impl Client {
         }
     }
 
-    /// Find a running instance: first the port it recorded, then the
+    /// Find *this user's* running instance: first the port it recorded, then the
     /// configured one. `None` when nothing answers like tsumiba.
+    ///
+    /// Answering to `ping` is not enough. The port is shared by the whole
+    /// machine, so the program that answers may be another user's tsumiba, or one
+    /// using a different data directory. It is ours only if it accepts our token.
     pub fn discover(dirs: &Dirs, config: &Config) -> Option<Client> {
         let token = token::load_or_create(&dirs.token_file()).ok()?;
         let mut ports: Vec<u16> = Vec::new();
@@ -77,7 +81,8 @@ impl Client {
         }
         ports.into_iter().find_map(|port| {
             let client = Client::new(port, token.clone());
-            client.ping().ok().filter(Ping::is_tsumiba).map(|_| client)
+            client.ping().ok().filter(Ping::is_tsumiba)?;
+            client.status().ok().map(|_| client)
         })
     }
 

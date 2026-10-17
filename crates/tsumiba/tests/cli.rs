@@ -384,3 +384,39 @@ fn a_stale_runtime_record_is_ignored() {
     assert!(out.ok, "{}", out.stderr);
     assert!(run(home.path(), &["list"]).stdout.contains("offline"));
 }
+
+#[test]
+fn another_users_instance_on_the_same_port_is_not_mistaken_for_ours() {
+    // Two independent homes (think: two users, or two data directories). The
+    // first runs a server. The second is configured with the *same port* but has
+    // its own token, so the first server answers `ping` yet refuses its token.
+    let first = tempfile::tempdir().unwrap();
+    let mut server = Serve::start(first.path());
+
+    let second = tempfile::tempdir().unwrap();
+    std::fs::create_dir_all(second.path().join("config")).unwrap();
+    std::fs::write(
+        second.path().join("config/config.toml"),
+        format!("[api]\nport = {}\n", server.port),
+    )
+    .unwrap();
+
+    let out = run(second.path(), &["note", "mine, not theirs"]);
+    assert!(out.ok, "{}", out.stderr);
+
+    // It went to the second home's own store...
+    assert!(run(second.path(), &["list"]).stdout.contains("mine, not theirs"));
+    // ...and the first server never saw it.
+    let token = std::fs::read_to_string(first.path().join("config/token")).unwrap();
+    let theirs = Request::new("GET", "/v1/notes").bearer(token.trim()).send(server.port);
+    assert_eq!(theirs.json().as_array().unwrap().len(), 0);
+
+    // A command that needs *our* app says it is not running, rather than failing
+    // with a confusing "wrong token".
+    let hide = run(second.path(), &["hide"]);
+    assert!(!hide.ok);
+    assert!(hide.stderr.contains("not running"), "{}", hide.stderr);
+
+    assert!(run(first.path(), &["quit"]).ok);
+    assert!(server.wait_for_exit());
+}

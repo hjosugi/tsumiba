@@ -8,7 +8,7 @@ cd "$(dirname "$0")/.."
 out=assets/icons
 mkdir -p "$out" assets/windows
 
-for size in 16 32 48 64 128 256 512; do
+for size in 16 32 48 64 128 256 512 1024; do
   magick -background none -density 384 assets/tsumiba.svg -resize "${size}x${size}" "PNG32:$out/tsumiba-$size.png"
 done
 

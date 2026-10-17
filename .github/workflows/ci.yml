@@ -1,0 +1,111 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  linux:
+    name: Linux (build, lint, test, GUI smoke)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - uses: Swatinem/rust-cache@v2
+      - name: Install build dependencies and the headless GUI toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            pkg-config libxcb1-dev libxcb-randr0-dev libxkbcommon-dev libx11-dev \
+            libwayland-dev libgl1-mesa-dri libglx-mesa0 libegl1 \
+            xvfb xdotool
+      - name: Format
+        run: cargo fmt --all --check
+      - name: Lint
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: Test
+        run: cargo test --workspace --locked
+      - name: Build (release)
+        run: cargo build --release --locked
+      - name: Binary reports its version
+        run: ./target/release/tsumiba --version
+      - name: GUI smoke test (summon, dismiss, type, quit) under Xvfb
+        run: scripts/smoke-gui-linux.sh ./target/release/tsumiba
+      - uses: actions/upload-artifact@v7
+        with:
+          name: tsumiba-linux-x86_64
+          path: target/release/tsumiba
+          if-no-files-found: error
+
+  windows:
+    name: Windows (build, lint, test)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Lint
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: Test
+        run: cargo test --workspace --locked
+      - name: Build (release)
+        run: cargo build --release --locked
+      - name: Binary reports its version
+        run: ./target/release/tsumiba.exe --version
+      - uses: actions/upload-artifact@v7
+        with:
+          name: tsumiba-windows-x86_64
+          path: target/release/tsumiba.exe
+          if-no-files-found: error
+
+  macos:
+    name: macOS (build, lint, test)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Lint
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: Test
+        run: cargo test --workspace --locked
+      - name: Build (release)
+        run: cargo build --release --locked
+      - name: Binary reports its version
+        run: ./target/release/tsumiba --version
+      - uses: actions/upload-artifact@v7
+        with:
+          name: tsumiba-macos-arm64
+          path: target/release/tsumiba
+          if-no-files-found: error
+
+  nix:
+    name: Nix (flake check)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: cachix/install-nix-action@v31
+      - name: Build the package and the dev shell
+        run: |
+          nix build .#default --print-build-logs
+          nix develop -c cargo --version
+      - name: The packaged binary runs
+        run: ./result/bin/tsumiba --version
