@@ -53,6 +53,7 @@ const TOAST: Duration = Duration::from_secs(6);
 const TOP_INSET: f32 = if cfg!(target_os = "macos") { 32.0 } else { 0.0 };
 
 /// Everything `main` prepares before the window exists.
+#[derive(Clone)]
 pub struct Boot {
     pub dirs: Dirs,
     pub config: Config,
@@ -96,7 +97,7 @@ pub(crate) enum Action {
     OpenConfigFile,
 }
 
-pub fn run(boot: Boot) -> eframe::Result {
+pub fn run(boot: Boot, renderer: eframe::Renderer) -> eframe::Result {
     let wayland = cursor::is_wayland();
     let icon = image::load_from_memory(APP_ICON).ok().map(|img| {
         let rgba = img.into_rgba8();
@@ -131,6 +132,7 @@ pub fn run(boot: Boot) -> eframe::Result {
     }
     let options = eframe::NativeOptions {
         viewport,
+        renderer,
         ..Default::default()
     };
 

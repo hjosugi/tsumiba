@@ -30,6 +30,9 @@ pub struct General {
     pub theme: Theme,
     /// Start tsumiba when you log in.
     pub launch_at_login: bool,
+    /// How the window is drawn. `auto` is right for nearly everyone; the others
+    /// are for working around a graphics driver that misbehaves.
+    pub renderer: Renderer,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -91,6 +94,19 @@ pub enum Theme {
     Dark,
 }
 
+/// Graphics backend for the window.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
+#[serde(rename_all = "lowercase")]
+pub enum Renderer {
+    /// OpenGL first; on Windows, if OpenGL cannot be used, restart with wgpu.
+    #[default]
+    Auto,
+    /// OpenGL only.
+    Glow,
+    /// wgpu (Windows builds only; other systems use OpenGL).
+    Wgpu,
+}
+
 /// What happens to a file you drop on the shelf.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, Default)]
 #[serde(rename_all = "lowercase")]
@@ -109,6 +125,7 @@ impl Default for General {
             language: Language::Auto,
             theme: Theme::System,
             launch_at_login: false,
+            renderer: Renderer::Auto,
         }
     }
 }
@@ -264,6 +281,7 @@ mod tests {
         let mut config = Config::default();
         config.general.language = Language::Ja;
         config.general.theme = Theme::Dark;
+        config.general.renderer = Renderer::Wgpu;
         config.storage.mode = StorageMode::Link;
         config.trigger.hotkey = "Ctrl+Shift+K".into();
         config.api.port = 5555;

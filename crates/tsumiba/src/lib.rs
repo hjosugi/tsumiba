@@ -11,5 +11,6 @@ pub mod i18n;
 pub mod launch;
 pub mod logging;
 pub mod platform;
+pub mod renderer;
 pub mod server;
 pub mod winconsole;

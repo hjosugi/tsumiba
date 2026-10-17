@@ -50,6 +50,14 @@ ureq = { version = "3.4.2", default-features = false, features = ["json"] }
 [dev-dependencies]
 tempfile = "3.27.0"
 
+# Windows also gets the wgpu renderer, as a fallback for machines whose OpenGL
+# is the 1.1 software stub (virtual machines, remote desktop sessions): wgpu can
+# use DirectX 12, including its software rasteriser.
+[target.'cfg(windows)'.dependencies.eframe]
+version = "0.35.0"
+default-features = false
+features = ["wgpu"]
+
 [target.'cfg(target_os = "linux")'.dependencies]
 x11rb = { version = "0.14.0", default-features = false, features = [] }
 

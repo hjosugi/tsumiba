@@ -33,6 +33,11 @@ The first release.
   checks that refuse DNS-rebinding and cross-site requests.
 - **Browser extension** for Chrome, Edge, Brave and Firefox: send the selection,
   a link, an image or the page; popup quick memo; options with pairing.
+- **Renderer fallback on Windows**: if OpenGL cannot be used (a virtual machine or
+  remote desktop session with no graphics driver), tsumiba restarts itself with
+  the wgpu renderer (DirectX 12, with its software rasteriser as a last resort).
+  `general.renderer` in `config.toml` (`auto`, `glow`, `wgpu`) or the
+  `TSUMIBA_RENDERER` environment variable chooses explicitly.
 - Japanese text renders out of the box: a system CJK font is found and used as a
   fallback.
 - Packaging: Windows zip, macOS universal `.app` (zip and dmg), Linux tar.gz,

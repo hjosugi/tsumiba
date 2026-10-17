@@ -8,6 +8,7 @@ use tsumiba_core::{Config, Dirs, Store, token};
 use crate::app::{self, Boot};
 use crate::client::Client;
 use crate::logging;
+use crate::renderer::{self, Backend};
 
 /// Open the shelf. `show` is whether the panel should appear at once (a manual
 /// launch) or the app should wait in the tray (start at login).
@@ -57,22 +58,38 @@ pub fn launch(show: bool) -> ExitCode {
     };
 
     log::info!("starting tsumiba {}", env!("CARGO_PKG_VERSION"));
+
+    let env_override = std::env::var(renderer::ENV).ok();
+    let setting = renderer::effective(config.general.renderer, env_override.as_deref());
+    let backend = renderer::first_choice(setting);
+
+    let boot = Boot {
+        dirs,
+        config,
+        config_error,
+        store,
+        token,
+        show,
+    };
+
     // Creating the window can panic when a system library cannot be loaded (the
     // windowing crates `dlopen` several). Turn that into an explanation.
     let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-        app::run(Boot {
-            dirs,
-            config,
-            config_error,
-            store,
-            token,
-            show,
-        })
+        app::run(boot, renderer::to_eframe(backend))
     }));
     match result {
         Ok(Ok(())) => ExitCode::SUCCESS,
         Ok(Err(e)) => {
             log::error!("the window could not be created: {e}");
+            if renderer::should_retry_with_wgpu(
+                setting,
+                backend,
+                renderer::is_graphics_error(&e),
+                env_override.as_deref(),
+            ) {
+                log::warn!("OpenGL is not usable here; trying again with wgpu");
+                return restart_with(Backend::Wgpu);
+            }
             eprintln!("tsumiba: the window could not be created: {e}");
             ExitCode::FAILURE
         }
@@ -81,6 +98,30 @@ pub fn launch(show: bool) -> ExitCode {
             let hint = missing_library_hint(&message);
             log::error!("the window could not be created: {message}. {hint}");
             eprintln!("tsumiba: the window could not be created: {message}\n{hint}");
+            ExitCode::FAILURE
+        }
+    }
+}
+
+/// Run this program again with another renderer and wait for it, so that to
+/// whoever started us it is still one process that lives as long as the app does.
+fn restart_with(backend: Backend) -> ExitCode {
+    let value = match backend {
+        Backend::Glow => "glow",
+        Backend::Wgpu => "wgpu",
+    };
+    let status = std::env::current_exe().and_then(|exe| {
+        std::process::Command::new(exe)
+            .args(std::env::args_os().skip(1))
+            .env(renderer::ENV, value)
+            .status()
+    });
+    match status {
+        Ok(status) if status.success() => ExitCode::SUCCESS,
+        Ok(_) => ExitCode::FAILURE,
+        Err(e) => {
+            log::error!("could not restart with the {value} renderer: {e}");
+            eprintln!("tsumiba: could not restart with the {value} renderer: {e}");
             ExitCode::FAILURE
         }
     }
