@@ -143,7 +143,7 @@ What has and has not been verified, stated plainly:
 | | Windows | macOS | Linux (X11) | Linux (Wayland) |
 | --- | --- | --- | --- | --- |
 | Builds, lints, unit and API/CLI tests | CI | CI | CI | CI |
-| The real app starts, runs its window loop, answers the CLI and quits | not yet confirmed | **CI** (`scripts/smoke-gui-macos.sh`, on a GitHub runner) | **CI**, plus summon/dismiss/typing checks under Xvfb (`scripts/smoke-gui-linux.sh`) | not yet confirmed |
+| The real app starts, runs its window loop, answers the CLI and quits | **CI** (`scripts/smoke-gui-windows.ps1`; on GitHub's GPU-less runner OpenGL fails and the wgpu fallback takes over) | **CI** (`scripts/smoke-gui-macos.sh`, on a GitHub runner) | **CI**, plus summon/dismiss/typing checks under Xvfb (`scripts/smoke-gui-linux.sh`) | not yet confirmed |
 | Window position, top-edge trigger, shortcut, drag-to-edge, tray | implemented, **not yet verified on a real machine** | implemented, **not yet verified on a real machine** | **verified under Xvfb** (no real desktop environment) | an ordinary window (implemented, **not yet tried on a real compositor**); no edge trigger or shortcut, Wayland forbids both |
 
 Not implemented yet: dragging a file *out* of the shelf into another app (the

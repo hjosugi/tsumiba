@@ -38,8 +38,8 @@ wgpu, so `wgpu` there falls back to OpenGL. A forced `glow` never retries, and t
 never loops.
 
 > [!NOTE]
-> That fallback is exercised only by the GPU-less Windows runner in CI (an informational job),
-> not on real virtual machines by the author.
+> That fallback is exercised by the GPU-less Windows runner in CI (a job that reports but does
+> not fail the build; it passes), not on real virtual machines by the author.
 
 ### `[panel]`
 

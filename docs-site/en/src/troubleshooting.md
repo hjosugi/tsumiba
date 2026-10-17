@@ -149,8 +149,8 @@ the environment variable `TSUMIBA_RENDERER` (`wgpu`, `glow`, `auto`), which wins
 file. Linux and macOS builds contain only OpenGL.
 
 > [!NOTE]
-> The fallback is exercised only by the GPU-less Windows runner in CI (an informational job),
-> not on real virtual machines by the author. If it does not work for you, please
+> The fallback is exercised by the GPU-less Windows runner in CI (a job that reports but does not
+> fail the build; it passes), not on real virtual machines by the author. If it does not work for you, please
 > [report it](https://github.com/hjosugi/tsumiba/issues) with the log file.
 
 ### macOS: "Tsumiba is damaged" or "cannot be opened" {#gatekeeper}

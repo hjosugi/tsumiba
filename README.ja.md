@@ -142,7 +142,7 @@ tsumiba が起動していればそれ経由で処理するのでウィンドウ
 | | Windows | macOS | Linux (X11) | Linux (Wayland) |
 | --- | --- | --- | --- | --- |
 | ビルド・lint・単体/API/CLI テスト | CI | CI | CI | CI |
-| 実アプリが起動し、ウィンドウループが回り、CLI に応答して終了する | 未確認 | **CI**(`scripts/smoke-gui-macos.sh`、GitHub のランナー上) | **CI**、および Xvfb 上の出現/消去/入力の確認(`scripts/smoke-gui-linux.sh`) | 未確認 |
+| 実アプリが起動し、ウィンドウループが回り、CLI に応答して終了する | **CI**(`scripts/smoke-gui-windows.ps1`。GitHub の GPU の無いランナーで OpenGL が失敗し、wgpu のフォールバックが動作) | **CI**(`scripts/smoke-gui-macos.sh`、GitHub のランナー上) | **CI**、および Xvfb 上の出現/消去/入力の確認(`scripts/smoke-gui-linux.sh`) | 未確認 |
 | ウィンドウ位置・上端トリガー・ショートカット・端へのドラッグ・トレイ | 実装済み、**実機では未検証** | 実装済み、**実機では未検証** | **Xvfb 上で検証済み**(実際のデスクトップ環境ではない) | 通常のウィンドウとして表示(実装済み、**実際のコンポジターでは未確認**)。上端トリガーとショートカットは Wayland の仕様上不可 |
 
 未対応: 置き場から他のアプリへファイルを**ドラッグで取り出す**操作(GUI ツールキットが

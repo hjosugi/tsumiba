@@ -15,9 +15,9 @@
 | --- | --- | --- | --- | --- |
 | ビルド、lint、ユニットテスト | <span class="tag">CI</span> | <span class="tag">CI</span> | <span class="tag">CI</span> | <span class="tag">CI</span> |
 | 保存層・HTTP API・コマンドラインのテスト(実際のプログラムを動かします) | <span class="tag">確認済み</span> <span class="tag">CI</span> | <span class="tag">CI</span> | <span class="tag">CI</span> | <span class="tag">CI</span> |
-| 実際のプログラムが起動し、イベントループと API が立ち上がり、`show` / `hide` / `quit` が受け付けられる | <span class="tag">確認済み</span> | <span class="tag">CI</span> | <span class="tag">CI</span> スモークテスト(参考扱い) | <span class="tag">CI</span> スモークテスト(参考扱い) |
+| 実際のプログラムが起動し、イベントループと API が立ち上がり、`show` / `hide` / `quit` が受け付けられる | <span class="tag">確認済み</span> | <span class="tag">CI</span> | <span class="tag">CI</span> スモークテスト(成功、<code>scripts/smoke-gui-windows.ps1</code>) | <span class="tag">CI</span> スモークテスト(成功、<code>scripts/smoke-gui-macos.sh</code>) |
 | ウィンドウ:隠れた状態で起動し、表示・非表示、スライドで現れる | <span class="tag">確認済み</span> | 通常のウィンドウ、スライドなし。<span class="tag">実装済み</span> | <span class="tag">実装済み</span> | <span class="tag">実装済み</span> |
-| GPU の無い環境でのウィンドウ作成(ソフトウェア描画) | <span class="tag">確認済み</span>(上記のすべての検証と同じく Mesa のソフトウェアレンダラー) | <span class="tag">実装済み</span> | <span class="tag">CI</span> GPU の無いランナー(参考扱い)。wgpu へのフォールバックで、実際の仮想マシンでは未試験 | <span class="tag">実装済み</span> |
+| GPU の無い環境でのウィンドウ作成(ソフトウェア描画) | <span class="tag">確認済み</span>(上記のすべての検証と同じく Mesa のソフトウェアレンダラー) | <span class="tag">実装済み</span> | <span class="tag">CI</span> GitHub の GPU の無いランナー: OpenGL が失敗し、wgpu へのフォールバック(DirectX 12 のソフトウェア描画)に切り替わってウィンドウが作られる。実際の仮想マシンでは未試験 | <span class="tag">CI</span>(仮想化されたランナー) |
 | メモ:書く、自動保存、切り替え、検索 | <span class="tag">確認済み</span> | <span class="tag">実装済み</span> | <span class="tag">実装済み</span> | <span class="tag">実装済み</span> |
 | メモ:ピン留め、削除と元に戻す | <span class="tag">実装済み</span> | <span class="tag">実装済み</span> | <span class="tag">実装済み</span> | <span class="tag">実装済み</span> |
 | ファイル:タイルとサムネイル、設定画面 | <span class="tag">確認済み</span>(目視) | <span class="tag">実装済み</span> | <span class="tag">実装済み</span> | <span class="tag">実装済み</span> |
