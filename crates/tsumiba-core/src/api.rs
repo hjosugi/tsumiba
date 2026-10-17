@@ -45,6 +45,12 @@ pub struct Status {
     pub files: usize,
     /// Whether the shelf is on screen right now. Always `false` for `tsumiba serve`.
     pub visible: bool,
+    /// Largest upload the server accepts, in MiB. A client that knows this can
+    /// refuse an oversized file itself: a server that rejects an upload early
+    /// closes the connection while the body is still being sent, and on some
+    /// systems the client then sees a network error instead of the 413.
+    #[serde(default)]
+    pub max_upload_mb: u32,
 }
 
 /// A note as the API shows it.

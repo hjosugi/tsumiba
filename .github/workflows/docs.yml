@@ -1,0 +1,62 @@
+name: Docs
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/docs.yml"
+      - "docs-site/**"
+      - "scripts/build-docs-site.sh"
+      - "scripts/check-docs-links.mjs"
+      - "assets/**"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/docs.yml"
+      - "docs-site/**"
+      - "scripts/build-docs-site.sh"
+      - "scripts/check-docs-links.mjs"
+      - "assets/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build the site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: mdbook@0.5.4
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Build the landing page and both books
+        run: scripts/build-docs-site.sh
+      - name: Check links, anchors, images and third-party requests
+        run: node scripts/check-docs-links.mjs target/docs-site
+      - uses: actions/configure-pages@v6
+        if: ${{ github.event_name != 'pull_request' }}
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: target/docs-site
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    if: ${{ github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

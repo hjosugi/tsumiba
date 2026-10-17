@@ -130,7 +130,21 @@ pub fn thumbnail_uri(file: &StoredFile) -> Option<String> {
     if !raster || file.is_dir || file.missing || file.size > MAX_THUMBNAIL_BYTES {
         return None;
     }
-    Some(format!("file://{}", file.path.display()))
+    Some(file_uri(&file.path.to_string_lossy(), cfg!(windows)))
+}
+
+/// The `file://` URI that egui's file loader turns back into `path`.
+///
+/// The loader does no percent-decoding, so the path goes in as it is. What differs
+/// is the slashes: on Unix the path's own leading `/` supplies the third slash of
+/// `file:///home/me/a.png`; on Windows the loader reads `file://C:\a.png` as a UNC
+/// host and needs the explicit slash of `file:///C:\a.png` to know it is a drive.
+pub fn file_uri(path: &str, windows: bool) -> String {
+    if windows {
+        format!("file:///{path}")
+    } else {
+        format!("file://{path}")
+    }
 }
 
 pub fn show(ui: &mut Ui, state: &mut FilesState, view: &View, actions: &mut Vec<Action>) {
@@ -459,6 +473,23 @@ mod tests {
         let mut gone = file("a.png", 1);
         gone.missing = true;
         assert!(thumbnail_uri(&gone).is_none());
+    }
+
+    #[test]
+    fn file_uris_are_shaped_the_way_the_loader_expects_on_each_os() {
+        assert_eq!(
+            file_uri("/home/me/my pic.png", false),
+            "file:///home/me/my pic.png"
+        );
+        assert_eq!(
+            file_uri("C:\\Users\\me\\a.png", true),
+            "file:///C:\\Users\\me\\a.png"
+        );
+        // A UNC share keeps its two backslashes after the explicit slash.
+        assert_eq!(
+            file_uri("\\\\nas\\share\\a.png", true),
+            "file:///\\\\nas\\share\\a.png"
+        );
     }
 
     #[cfg(unix)]

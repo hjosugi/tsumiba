@@ -96,7 +96,9 @@ impl<'a> Request<'a> {
         self
     }
 
-    pub fn send(self, port: u16) -> Response {
+    /// Send the request and return the response, or `None` if the server closed
+    /// the connection without answering (which it may do to a rude client).
+    pub fn try_send(self, port: u16) -> Option<Response> {
         let mut stream = TcpStream::connect(("127.0.0.1", port)).expect("connect");
         stream
             .set_read_timeout(Some(Duration::from_secs(10)))
@@ -124,8 +126,26 @@ impl<'a> Request<'a> {
         }
         head.push_str("\r\n");
 
-        // The server may answer (and close) before the whole body is sent, as
-        // it should for an oversized upload; a failed write is not a test failure.
+        // Read the response on another thread *while* the body is still going out.
+        // A server that answers early (an oversized upload, say) closes the socket
+        // with our bytes unread, and Windows and macOS then reset the connection,
+        // throwing away a response we have not read yet. Reading as it arrives
+        // keeps it.
+        let mut reader = stream.try_clone().expect("clone the socket");
+        let collector = std::thread::spawn(move || {
+            let mut raw = Vec::new();
+            let mut buffer = [0u8; 8192];
+            while let Ok(n) = reader.read(&mut buffer) {
+                if n == 0 {
+                    break;
+                }
+                raw.extend_from_slice(&buffer[..n]);
+            }
+            raw
+        });
+
+        // The server may stop listening before the whole body is sent, as it
+        // should for an oversized upload; a failed write is not a test failure.
         let _ = stream.write_all(head.as_bytes());
         if self.chunked {
             for chunk in self.body.chunks(64 * 1024) {
@@ -139,9 +159,17 @@ impl<'a> Request<'a> {
         }
         let _ = stream.flush();
 
-        let mut raw = Vec::new();
-        let _ = stream.read_to_end(&mut raw);
-        parse(&raw)
+        let raw = collector.join().expect("the reader thread");
+        if raw.windows(4).any(|w| w == b"\r\n\r\n") {
+            Some(parse(&raw))
+        } else {
+            None
+        }
+    }
+
+    pub fn send(self, port: u16) -> Response {
+        self.try_send(port)
+            .expect("the server closed the connection without answering")
     }
 }
 

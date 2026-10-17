@@ -265,6 +265,11 @@ fn route(ctx: &ApiContext, port: u16, request: &mut Request) -> Reply {
                 notes: ctx.store.notes().len(),
                 files: ctx.store.files().len(),
                 visible: ctx.control.is_visible(),
+                max_upload_mb: ctx
+                    .config
+                    .read()
+                    .map(|c| c.storage.max_upload_mb)
+                    .unwrap_or(Config::default().storage.max_upload_mb),
             },
         ),
         (Method::Post, ["window"]) => window(ctx, request),

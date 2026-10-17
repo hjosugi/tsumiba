@@ -1,0 +1,207 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  # Builds every artifact without publishing, to rehearse a release.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  verify:
+    name: Check the version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+      - id: v
+        name: Read the version and check it against the tag
+        shell: bash
+        run: |
+          version="$(sed -n '/^\[workspace.package\]/,/^\[/{s/^version = "\(.*\)"/\1/p}' Cargo.toml | head -1)"
+          test -n "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if [ "${GITHUB_REF_TYPE}" = tag ]; then
+            test "${GITHUB_REF_NAME}" = "v${version}" || {
+              echo "tag ${GITHUB_REF_NAME} does not match Cargo.toml version ${version}" >&2
+              exit 1
+            }
+          fi
+      - name: Release notes from the changelog
+        shell: bash
+        run: |
+          version="${{ steps.v.outputs.version }}"
+          # The section under "## [<version>]" up to the next "## [".
+          awk -v v="$version" '
+            $0 ~ "^## \\[" v "\\]" { on = 1; next }
+            on && /^## \[/ { exit }
+            on { print }
+          ' CHANGELOG.md | sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' > notes.md
+          test -s notes.md || { echo "CHANGELOG.md has no entry for ${version}" >&2; exit 1; }
+          cat >> notes.md <<'EOF'
+
+          ---
+
+          **Install:** see the [README](https://github.com/hjosugi/tsumiba#install) or the
+          [documentation](https://hjosugi.github.io/tsumiba/). Verify downloads against `SHA256SUMS.txt`.
+
+          Windows and macOS builds are produced and tested by CI; the window, tray and shortcut
+          behaviour on those systems has not yet been verified on real machines.
+          Releases are not code-signed (Windows) or notarised (macOS).
+          EOF
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-notes
+          path: notes.md
+
+  linux:
+    name: Linux ${{ matrix.arch }}
+    needs: verify
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # The oldest runner image, so the binary runs on the oldest glibc we can.
+          - { os: ubuntu-22.04, arch: x86_64 }
+          - { os: ubuntu-24.04-arm, arch: aarch64 }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: release-${{ matrix.arch }}
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            pkg-config libxcb1-dev libxcb-randr0-dev libxkbcommon-dev libx11-dev libwayland-dev
+      - name: Build
+        run: cargo build --release --locked
+      - name: Package
+        run: scripts/package-linux.sh "${{ needs.verify.outputs.version }}" "${{ matrix.arch }}" target/release/tsumiba
+      - uses: actions/upload-artifact@v7
+        with:
+          name: linux-${{ matrix.arch }}
+          path: dist/*.tar.gz
+          if-no-files-found: error
+
+  windows:
+    name: Windows x86_64
+    needs: verify
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: release
+      - name: Build
+        run: cargo build --release --locked
+      - name: Package
+        shell: pwsh
+        run: |
+          $version = "${{ needs.verify.outputs.version }}"
+          $stage = "stage"
+          New-Item -ItemType Directory -Force -Path $stage, dist | Out-Null
+          Copy-Item target\release\tsumiba.exe, LICENSE, README.md $stage
+          Compress-Archive -Path "$stage\*" -DestinationPath "dist\tsumiba-$version-windows-x86_64.zip"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: windows-x86_64
+          path: dist/*.zip
+          if-no-files-found: error
+
+  macos:
+    name: macOS universal
+    needs: verify
+    runs-on: macos-latest
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "11.0"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: release
+      - name: Build both architectures
+        run: |
+          cargo build --release --locked --target aarch64-apple-darwin
+          cargo build --release --locked --target x86_64-apple-darwin
+      - name: One binary for both
+        run: |
+          mkdir -p target/universal
+          lipo -create \
+            target/aarch64-apple-darwin/release/tsumiba \
+            target/x86_64-apple-darwin/release/tsumiba \
+            -output target/universal/tsumiba
+          lipo -info target/universal/tsumiba
+      - name: Bundle Tsumiba.app (zip and dmg)
+        run: scripts/bundle-macos.sh "${{ needs.verify.outputs.version }}" target/universal/tsumiba
+      - uses: actions/upload-artifact@v7
+        with:
+          name: macos-universal
+          path: |
+            dist/*.zip
+            dist/*.dmg
+          if-no-files-found: error
+
+  extension:
+    name: Browser extension
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Build both browsers' packages
+        run: node extension/build.mjs
+      - uses: actions/upload-artifact@v7
+        with:
+          name: extension
+          path: extension/dist/*.zip
+          if-no-files-found: error
+
+  publish:
+    name: Publish the release
+    needs: [verify, linux, windows, macos, extension]
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Checksums
+        shell: bash
+        run: |
+          cd artifacts
+          cp ../scripts/install.sh ../scripts/install.ps1 .
+          ls -la
+          # Only the packages are listed; the installer scripts fetch this file.
+          sha256sum tsumiba-* > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          version="${{ needs.verify.outputs.version }}"
+          gh release create "${GITHUB_REF_NAME}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "tsumiba ${version}" \
+            --notes-file artifacts/notes.md \
+            --verify-tag \
+            artifacts/tsumiba-* artifacts/SHA256SUMS.txt artifacts/install.sh artifacts/install.ps1

@@ -120,6 +120,11 @@ fn the_right_token_gets_status() {
     assert_eq!(r.json()["notes"], 1);
     assert_eq!(r.json()["files"], 0);
     assert_eq!(r.json()["visible"], false);
+    assert_eq!(
+        r.json()["max_upload_mb"],
+        512,
+        "the default limit is advertised"
+    );
 }
 
 // ---- DNS rebinding and cross-site requests ---------------------------------
@@ -450,6 +455,11 @@ fn hostile_file_names_cannot_escape_the_shelf() {
 fn uploads_over_the_limit_are_refused() {
     let f = fixture();
     f.config.write().unwrap().storage.max_upload_mb = 1;
+    assert_eq!(
+        f.get("/v1/status").json()["max_upload_mb"],
+        1,
+        "a changed limit is advertised too"
+    );
     let exactly = vec![7u8; 1024 * 1024];
     assert_eq!(
         upload(&f, "ok.bin", None, "application/octet-stream", &exactly).status,
@@ -504,14 +514,17 @@ fn a_lying_content_length_cannot_sneak_past_the_limit() {
     f.config.write().unwrap().storage.max_upload_mb = 1;
     // Claims to be tiny, sends 2 MiB. The server must stop at the limit, not at the claim.
     let body = vec![1u8; 2 * 1024 * 1024];
-    let r = Request::new("POST", "/v1/files")
+    let answer = Request::new("POST", "/v1/files")
         .bearer(TOKEN)
         .header("X-Tsumiba-Name", "sneaky.bin")
         .body(&body)
         .claimed_length(10)
-        .send(f.port);
-    // tiny_http honours Content-Length, so only 10 bytes are read.
-    assert!(r.status == 201 || r.status == 413, "{}", r.status);
+        .try_send(f.port);
+    // tiny_http honours Content-Length, so only 10 bytes are read. Whether the
+    // rude client gets an answer or a closed connection varies by system.
+    if let Some(r) = answer {
+        assert!(r.status == 201 || r.status == 413, "{}", r.status);
+    }
     for file in f.store.files() {
         assert!(file.size <= 1024 * 1024, "{} bytes stored", file.size);
     }
