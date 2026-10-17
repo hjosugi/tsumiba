@@ -143,8 +143,8 @@ What has and has not been verified, stated plainly:
 | | Windows | macOS | Linux (X11) | Linux (Wayland) |
 | --- | --- | --- | --- | --- |
 | Builds, lints, unit and API/CLI tests | CI | CI | CI | CI |
-| Window, top-edge trigger, shortcut, drag-to-edge | implemented, **not yet verified on a real machine** | implemented, **not yet verified on a real machine** | **verified end to end under Xvfb** (`scripts/smoke-gui-linux.sh`) | the shelf is an ordinary window; no edge trigger or shortcut (Wayland forbids both) |
-| Tray icon | implemented, not yet verified | implemented, not yet verified | implemented (StatusNotifier; GNOME needs the AppIndicator extension) | same |
+| The real app starts, runs its window loop, answers the CLI and quits | not yet confirmed | **CI** (`scripts/smoke-gui-macos.sh`, on a GitHub runner) | **CI**, plus summon/dismiss/typing checks under Xvfb (`scripts/smoke-gui-linux.sh`) | not yet confirmed |
+| Window position, top-edge trigger, shortcut, drag-to-edge, tray | implemented, **not yet verified on a real machine** | implemented, **not yet verified on a real machine** | **verified under Xvfb** (no real desktop environment) | an ordinary window (implemented, **not yet tried on a real compositor**); no edge trigger or shortcut, Wayland forbids both |
 
 Not implemented yet: dragging a file *out* of the shelf into another app (the
 GUI toolkit cannot start a native drag; use **Show in folder**, **Copy file** or
