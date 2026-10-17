@@ -405,10 +405,16 @@ fn another_users_instance_on_the_same_port_is_not_mistaken_for_ours() {
     assert!(out.ok, "{}", out.stderr);
 
     // It went to the second home's own store...
-    assert!(run(second.path(), &["list"]).stdout.contains("mine, not theirs"));
+    assert!(
+        run(second.path(), &["list"])
+            .stdout
+            .contains("mine, not theirs")
+    );
     // ...and the first server never saw it.
     let token = std::fs::read_to_string(first.path().join("config/token")).unwrap();
-    let theirs = Request::new("GET", "/v1/notes").bearer(token.trim()).send(server.port);
+    let theirs = Request::new("GET", "/v1/notes")
+        .bearer(token.trim())
+        .send(server.port);
     assert_eq!(theirs.json().as_array().unwrap().len(), 0);
 
     // A command that needs *our* app says it is not running, rather than failing
