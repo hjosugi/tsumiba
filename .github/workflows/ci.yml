@@ -30,7 +30,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            pkg-config libxcb1-dev libxcb-randr0-dev libxkbcommon-dev libx11-dev \
+            pkg-config libxcb1-dev libxcb-randr0-dev libxkbcommon-dev libxkbcommon-x11-0 libx11-dev \
             libwayland-dev libgl1-mesa-dri libglx-mesa0 libegl1 \
             xvfb xdotool
       - name: Format
@@ -68,6 +68,12 @@ jobs:
         run: cargo build --release --locked
       - name: Binary reports its version
         run: ./target/release/tsumiba.exe --version
+      # Informational: a runner has no GPU, so this also shows whether the window
+      # can be created without one. It does not fail the build.
+      - name: GUI launch (informational)
+        continue-on-error: true
+        shell: pwsh
+        run: scripts/smoke-gui-windows.ps1 target\release\tsumiba.exe
       - uses: actions/upload-artifact@v7
         with:
           name: tsumiba-windows-x86_64
@@ -91,6 +97,9 @@ jobs:
         run: cargo build --release --locked
       - name: Binary reports its version
         run: ./target/release/tsumiba --version
+      - name: GUI launch (informational)
+        continue-on-error: true
+        run: scripts/smoke-gui-macos.sh target/release/tsumiba
       - uses: actions/upload-artifact@v7
         with:
           name: tsumiba-macos-arm64
