@@ -23,4 +23,3 @@ debug = false
 lto = "thin"
 codegen-units = 1
 strip = true
-panic = "abort"

@@ -42,7 +42,9 @@ pub fn regenerate(path: &Path) -> Result<String> {
 fn generate() -> Result<String> {
     let mut bytes = [0u8; TOKEN_BYTES];
     getrandom::fill(&mut bytes).map_err(|e| {
-        Error::Invalid(format!("the operating system could not provide random bytes: {e}"))
+        Error::Invalid(format!(
+            "the operating system could not provide random bytes: {e}"
+        ))
     })?;
     Ok(bytes.iter().map(|b| format!("{b:02x}")).collect())
 }

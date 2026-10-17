@@ -4,11 +4,11 @@
 //! This crate has no user interface and no network code. It is what the app,
 //! the command line and the tests share:
 //!
-//! - [`store`]: notes and files on disk ([`Store`])
-//! - [`config`]: `config.toml`
-//! - [`paths`]: where everything lives
-//! - [`api`]: request and response types of the local HTTP API
-//! - [`token`] and [`runtime`]: pairing secret and the running-instance record
+//! - [`store`] — notes and files on disk ([`Store`])
+//! - [`config`] — `config.toml`
+//! - [`paths`] — where everything lives
+//! - [`api`] — request and response types of the local HTTP API
+//! - [`token`] and [`runtime`] — the pairing secret and the running-instance record
 
 pub mod api;
 pub mod config;

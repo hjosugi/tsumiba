@@ -97,6 +97,10 @@ pub struct FileDto {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct ImportRequest {
     pub paths: Vec<String>,
+    /// Store the files as links to the originals instead of copying, whatever
+    /// the `storage.mode` setting says.
+    #[serde(default)]
+    pub link: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]

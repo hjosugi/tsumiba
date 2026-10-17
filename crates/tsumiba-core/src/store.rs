@@ -483,9 +483,9 @@ impl Store {
     pub fn stage_link(&self, src: &Path) -> Result<Staged> {
         let meta = fs::metadata(src).context(|| format!("read {}", src.display()))?;
         let absolute = std::path::absolute(src).context(|| format!("resolve {}", src.display()))?;
-        let link = absolute.to_str().ok_or_else(|| {
-            Error::Invalid(format!("{} is not valid UTF-8", absolute.display()))
-        })?;
+        let link = absolute
+            .to_str()
+            .ok_or_else(|| Error::Invalid(format!("{} is not valid UTF-8", absolute.display())))?;
         Ok(Staged {
             id: id::new_id(),
             name: sanitize_file_name(&file_name_of(&absolute)),
@@ -516,7 +516,8 @@ impl Store {
             if n > limit {
                 return Err(Error::TooLarge { limit });
             }
-            out.sync_all().context(|| format!("flush {}", dst.display()))?;
+            out.sync_all()
+                .context(|| format!("flush {}", dst.display()))?;
             Ok(n)
         })();
         match result {
@@ -541,7 +542,9 @@ impl Store {
             size: staged.size,
             added_ms: id::created_ms(&staged.id).unwrap_or_else(id::now_ms),
             pinned: false,
-            source: source.map(|s| truncate_chars(&s, 2048)).filter(|s| !s.is_empty()),
+            source: source
+                .map(|s| truncate_chars(&s, 2048))
+                .filter(|s| !s.is_empty()),
             link: staged.link,
             dir: staged.is_dir,
             missing: false,
@@ -692,10 +695,7 @@ impl Store {
         let mut purged = 0;
         for entry in entries.flatten() {
             let name = entry.file_name().to_string_lossy().into_owned();
-            let deleted_ms = name
-                .split('_')
-                .next()
-                .and_then(|ms| ms.parse::<u64>().ok());
+            let deleted_ms = name.split('_').next().and_then(|ms| ms.parse::<u64>().ok());
             // An entry whose name we cannot read is left alone: it is not ours to delete.
             if deleted_ms.is_some_and(|ms| ms < cutoff) && fs::remove_dir_all(entry.path()).is_ok()
             {
@@ -876,7 +876,10 @@ fn scan(root: &Path, inner: &mut Inner) -> bool {
             };
             let mtime = mtime_ms(&path);
             seen.insert(id.clone());
-            let up_to_date = inner.notes.get(&id).is_some_and(|rec| rec.mtime_ms == mtime);
+            let up_to_date = inner
+                .notes
+                .get(&id)
+                .is_some_and(|rec| rec.mtime_ms == mtime);
             if up_to_date {
                 continue;
             }
@@ -1036,7 +1039,10 @@ mod tests {
             updated_ms: 0,
         };
         assert_eq!(note("# Heading\n\nbody text\nmore").title(), "Heading");
-        assert_eq!(note("# Heading\n\nbody text\nmore").snippet(), "body text more");
+        assert_eq!(
+            note("# Heading\n\nbody text\nmore").snippet(),
+            "body text more"
+        );
         assert_eq!(note("\n\n  hello  ").title(), "hello");
         assert_eq!(note("").title(), "");
         assert_eq!(note("only title").snippet(), "");
@@ -1071,12 +1077,24 @@ mod tests {
     fn ids_from_outside_are_validated() {
         let (_tmp, store) = open();
         for bad in ["../x", "", "a/b", "..\\x"] {
-            assert!(matches!(store.update_note(bad, "x"), Err(Error::Invalid(_))), "{bad}");
-            assert!(matches!(store.delete_note(bad), Err(Error::Invalid(_))), "{bad}");
-            assert!(matches!(store.delete_file(bad), Err(Error::Invalid(_))), "{bad}");
+            assert!(
+                matches!(store.update_note(bad, "x"), Err(Error::Invalid(_))),
+                "{bad}"
+            );
+            assert!(
+                matches!(store.delete_note(bad), Err(Error::Invalid(_))),
+                "{bad}"
+            );
+            assert!(
+                matches!(store.delete_file(bad), Err(Error::Invalid(_))),
+                "{bad}"
+            );
         }
         let missing = id::new_id();
-        assert!(matches!(store.update_note(&missing, "x"), Err(Error::NotFound(_))));
+        assert!(matches!(
+            store.update_note(&missing, "x"),
+            Err(Error::NotFound(_))
+        ));
     }
 
     #[test]
@@ -1206,7 +1224,9 @@ mod tests {
             .stage_reader("../../evil.txt", &mut &b"12345"[..], 5)
             .unwrap();
         assert_eq!(staged.name(), "evil.txt");
-        let file = store.commit(staged, Some("https://example.com/a".into())).unwrap();
+        let file = store
+            .commit(staged, Some("https://example.com/a".into()))
+            .unwrap();
         assert_eq!(file.size, 5);
         assert_eq!(file.source.as_deref(), Some("https://example.com/a"));
         assert!(file.path.starts_with(store.root()));
@@ -1266,11 +1286,15 @@ mod tests {
         let warnings = store.take_warnings();
         assert_eq!(warnings.len(), 1, "{warnings:?}");
         assert!(warnings[0].contains("index.json"));
-        assert!(fs::read_dir(&root).unwrap().flatten().any(|e| e
-            .file_name()
-            .to_string_lossy()
-            .starts_with("index.json.corrupt-")));
-        assert!(store.take_warnings().is_empty(), "warnings are reported once");
+        assert!(fs::read_dir(&root).unwrap().flatten().any(|e| {
+            e.file_name()
+                .to_string_lossy()
+                .starts_with("index.json.corrupt-")
+        }));
+        assert!(
+            store.take_warnings().is_empty(),
+            "warnings are reported once"
+        );
     }
 
     #[test]
@@ -1296,9 +1320,18 @@ mod tests {
         fs::write(&path, "v2 from elsewhere").unwrap();
         // Make sure the mtime differs even on coarse filesystems.
         let later = SystemTime::now() + Duration::from_secs(5);
-        fs::File::options().write(true).open(&path).unwrap().set_modified(later).unwrap();
+        fs::File::options()
+            .write(true)
+            .open(&path)
+            .unwrap()
+            .set_modified(later)
+            .unwrap();
         let extra = id::new_id();
-        fs::write(store.root().join("notes").join(format!("{extra}.md")), "added").unwrap();
+        fs::write(
+            store.root().join("notes").join(format!("{extra}.md")),
+            "added",
+        )
+        .unwrap();
 
         assert!(store.refresh().unwrap());
         assert_eq!(store.note(&note.id).unwrap().body, "v2 from elsewhere");
@@ -1326,7 +1359,11 @@ mod tests {
         let note = store.add_note("x").unwrap();
         store.delete_note(&note.id).unwrap();
         assert_eq!(store.purge_trash(TRASH_RETENTION), 0, "fresh entries stay");
-        assert_eq!(store.purge_trash(Duration::ZERO), 1, "everything is older than zero");
+        assert_eq!(
+            store.purge_trash(Duration::ZERO),
+            1,
+            "everything is older than zero"
+        );
         assert_eq!(fs::read_dir(store.root().join("trash")).unwrap().count(), 0);
     }
 

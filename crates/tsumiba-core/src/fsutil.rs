@@ -166,7 +166,10 @@ mod tests {
 
     #[test]
     fn forbidden_characters_are_replaced() {
-        assert_eq!(sanitize_file_name("a<b>c:d\"e|f?g*h.txt"), "a_b_c_d_e_f_g_h.txt");
+        assert_eq!(
+            sanitize_file_name("a<b>c:d\"e|f?g*h.txt"),
+            "a_b_c_d_e_f_g_h.txt"
+        );
         assert_eq!(sanitize_file_name("tab\there"), "tab_here");
     }
 

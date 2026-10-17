@@ -118,7 +118,7 @@ impl Default for Panel {
         Panel {
             show_notes: true,
             show_files: true,
-            width: 940.0,
+            width: 1040.0,
             height: 380.0,
             auto_hide: true,
         }
@@ -188,7 +188,7 @@ impl Config {
 
     /// Clamp numeric settings into ranges the UI can actually render.
     pub fn sanitized(mut self) -> Config {
-        self.panel.width = clamp_f32(self.panel.width, 480.0, 3000.0, 940.0);
+        self.panel.width = clamp_f32(self.panel.width, 480.0, 3000.0, 1040.0);
         self.panel.height = clamp_f32(self.panel.height, 240.0, 2000.0, 380.0);
         self.trigger.edge_dwell_ms = self.trigger.edge_dwell_ms.min(5000);
         self.storage.max_upload_mb = self.storage.max_upload_mb.clamp(1, 65_536);

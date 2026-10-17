@@ -34,7 +34,11 @@ pub struct Dirs {
 impl Dirs {
     /// Resolve the directories from the process environment.
     pub fn discover() -> Result<Dirs> {
-        Self::discover_with(|key| std::env::var_os(key).filter(|v| !v.is_empty()).map(PathBuf::from))
+        Self::discover_with(|key| {
+            std::env::var_os(key)
+                .filter(|v| !v.is_empty())
+                .map(PathBuf::from)
+        })
     }
 
     /// [`discover`](Self::discover) with the environment injected, so tests do

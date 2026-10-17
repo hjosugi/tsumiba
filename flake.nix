@@ -20,7 +20,7 @@
       # LD_LIBRARY_PATH for a binary built outside of Nix.
       runtimeLibs =
         pkgs:
-        pkgs.lib.optionals pkgs.stdenv.isLinux (
+        pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux (
           with pkgs;
           [
             libGL
@@ -86,7 +86,7 @@
                 zip
                 jq
               ]
-              ++ pkgs.lib.optionals pkgs.stdenv.isLinux (
+              ++ pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux (
                 with pkgs;
                 [
                   libx11
