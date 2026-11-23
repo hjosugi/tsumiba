@@ -685,7 +685,8 @@ impl Store {
         Ok(())
     }
 
-    /// Permanently remove trash entries older than `max_age`.
+    /// Permanently remove trash entries that are at least `max_age` old, so a
+    /// `max_age` of zero empties the trash.
     pub fn purge_trash(&self, max_age: Duration) -> usize {
         let trash = self.shared.root.join("trash");
         let Ok(entries) = fs::read_dir(&trash) else {
@@ -697,7 +698,9 @@ impl Store {
             let name = entry.file_name().to_string_lossy().into_owned();
             let deleted_ms = name.split('_').next().and_then(|ms| ms.parse::<u64>().ok());
             // An entry whose name we cannot read is left alone: it is not ours to delete.
-            if deleted_ms.is_some_and(|ms| ms < cutoff) && fs::remove_dir_all(entry.path()).is_ok()
+            // `<=`, not `<`: an entry trashed in this same millisecond has reached an
+            // age of zero, and the clock is too coarse to say anything finer.
+            if deleted_ms.is_some_and(|ms| ms <= cutoff) && fs::remove_dir_all(entry.path()).is_ok()
             {
                 purged += 1;
             }
