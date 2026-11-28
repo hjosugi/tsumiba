@@ -150,7 +150,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
-      - uses: cachix/install-nix-action@v31
+      - uses: cachix/install-nix-action@v32
       - name: Build the package and the dev shell
         run: |
           nix build .#default --print-build-logs
